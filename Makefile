@@ -1,5 +1,5 @@
-NAME = philo
-NAME_BONUS = philo_b
+NAME = minishell
+NAME_BONUS = minishell_b
 
 CC = cc
 # FLAGS = -Wextra -Wall -g -fPIE -I$(HEADER_FOLDER)
@@ -22,8 +22,8 @@ all: $(NAME)
 # ╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
 
 
-NAMEE = philo
-NAMEE_BONUS = philo_b
+NAMEE = minishell
+NAMEE_BONUS = minishell_b
 # num_philo . tt_die . tt_eat . tt_sleep . [num_time_each_philosopher_must_eat]
 NUM_PHILO = 6
 TIME_DIE = 605

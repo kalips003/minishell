@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   a_outils.c                                         :+:      :+:    :+:   */
+/*   o_outils.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: agallon <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/15 17:11:46 by kalipso           #+#    #+#             */
-/*   Updated: 2024/06/28 17:19:52 by agallon          ###   ########.fr       */
+/*   Updated: 2024/07/05 19:52:43 by agallon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#include "minishell.h"
 
 static int	same_str_n(char *gnl0, char *stop_w);
 void		dup_close(int fd_replace, int fd_erase);
