@@ -53,6 +53,8 @@ char	**expand_tab(char **tab, char *new_line)
 	return (new_tab);
 }
 
+///////////////////////////////////////////////////////////////////////////////]
+// yes, its secure for NULL tab
 void	*free_tab(char **tab)
 {
 	int	i;

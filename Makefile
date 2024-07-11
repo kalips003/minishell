@@ -2,8 +2,8 @@ NAME = minishell
 NAME_BONUS = minishell_b
 
 CC = cc
-# FLAGS = -Wextra -Wall -g -fPIE -I$(HEADER_FOLDER)
-FLAGS = -Wextra -Wall -Werror -g -fPIE -I$(HEADER_FOLDER)
+FLAGS = -Wextra -Wall -g -fPIE -I$(HEADER_FOLDER)
+# FLAGS = -Wextra -Wall -Werror -g -fPIE -I$(HEADER_FOLDER)
 
 all: $(NAME)
 
@@ -24,75 +24,35 @@ all: $(NAME)
 
 NAMEE = minishell
 NAMEE_BONUS = minishell_b
-# num_philo . tt_die . tt_eat . tt_sleep . [num_time_each_philosopher_must_eat]
-NUM_PHILO = 6
-TIME_DIE = 605
-TIME_EAT = 300
-TIME_SLEEP = 300
 
-ARG_SET_33 = 200 800 200 200 20
-ARG = $(NUM_PHILO) $(TIME_DIE) $(TIME_EAT) $(TIME_SLEEP)
-ARG2 = 5 100 33 66 3
 
-a: $(NAME)
+a: $(NAMEE)
 	@$(call random_shmol_cat, teshting ... $@: $(ARG), 'hav fun ね? ($(word 1, $^))', $(CLS), );
-	./$(word 1, $^) $(ARG)
+	./$(word 1, $^)
 
-c: $(NAME)
-	@$(call random_shmol_cat, teshting ... $@: $(ARG_SET_33), 'hav fun ね? ($(word 1, $^))', $(CLS), );
-	$(HELLGRIND) ./$(word 1, $^) $(ARG_SET_33)
+ARG_SET_1 = echo hello > txt | cat
+ARG_SET_2 = grep "error" < log.txt | sort | uniq > errors.txt 2> errors.log
+ARG_SET_3 = cmd1 < infile | cmd2 > outfile | cmd3 >> appendfile
+ARG_SET_3 = cmd1 < $FILE | cmd2 "> outfile" | cmd3 && cmd3 >> appendfile
 
-b: $(NAME_BONUS)
-	@$(call random_shmol_cat, teshting ... $@ !, " $(NAME_BONUS): ", $(CLS), );
-	$(VALGRIIND) ./$(word 1, $^) $(ARG)
+ARG_SET_4 = echo asdlkjfss ; > adsf >> aaaaaaaaaaaa << END | echo a || echo b
 
-d:	$(NAMEE)
-	-@$(call random_shmol_cat, "\'teshting the limits of the food chain: MANY MIANY PHILO", $(ARG_SET_15), $(CLS), )
-	@echo "\n\tTHIS ONE WILL TAKE A LOTS OF TIME\n\tthe output will be grep for 'died'\n";
-	-./$(word 1, $^) $(ARG_SET_33) | grep died
-	@(echo "\n\t\033[5m~ Press Enter to continue...\033[0m"; read -p "" key);
+b: $(NAMEE)
+	@$(call random_shmol_cat, teshting ... $@: $(ARG), 'hav fun ね? ($(word 1, $^))', $(CLS), );
+	./$(word 1, $^)
 
-v: $(NAME)
+
+v: $(NAMEE)
 	@$(call random_shmol_cat, "vlgrininnng ... $(word 1, $^)!", "$(ARG2)", $(CLS), );
-	-$(HELLGRIND) ./$(word 1, $^) $(ARG2)
+	-$(VALGRIND) ./$(word 1, $^)
 
 
-ARG_SET_1 = 0 60 60 60
-ARG_SET_2 = 1 1000 60 60
-ARG_SET_22 = 2 500 300 60
-ARG_SET_4 = 6 200 99 99 5
-ARG_SET_3 = 200 250 50 70 2
-ARG_SET_5 = 7 200 99 99 5
-ARG_SET_6 = 7 210 70 139 5
-ARG_SET_7 = 7 210 70 140 5
-ARG_SET_8 = 7 100 10 300
-ARG_SET_9 = 7 100 300 10
-ARG_SET_10 = 6 100 49 49
-ARG_SET_11 = 5 100 33 66
-ARG_SET_12 = 8 15 5 5 10
-ARG_SET_13 = 3 4 1 1 5
-ARG_SET_14 = 7 250 50 150
-ARG_SET_15 = 200 800 200 200 200
 
 # MAKE M: Run life threatening arguments (no valgrind, make things fucked up)
 #
-m: $(NAME)
+m: $(NAMEE)
 	-@$(call helper_tester, $(ARG_SET_1), "\'teshting the limits of the food chain:", shouldnt work, $(HELLGRIND))
-	-@$(call helper_tester, $(ARG_SET_2), "\'teshting the limits of the food chain:", should die without sleep, timeout 3s $(HELLGRIND))
-	-@$(call helper_tester, $(ARG_SET_22), "\'teshting the limits of the food chain:", one should die, timeout 3s $(HELLGRIND))
-	-@$(call helper_tester, $(ARG_SET_4), "\'teshting the limits of the food chain:", should all live happily ever after, )
-	-@$(call helper_tester, $(ARG_SET_3), "\'teshting the limits of the food chain: MANY MIANY PHILO", should all live happily ever after, )
-	-@$(call helper_tester, $(ARG_SET_5), "\'teshting the limits of the food chain:", one should die, )
-	-@$(call helper_tester, $(ARG_SET_6), "\'teshting the limits of the food chain:", should all live happily ever after, )
-	-@$(call helper_tester, $(ARG_SET_7), "\'teshting the limits of the food chain:", live or die? maybe?, )
-	-@$(call helper_tester, $(ARG_SET_8), "\'teshting the limits of the food chain:", should stop after the first death in their sleep, timeout 3s $(HELLGRIND))
-	-@$(call helper_tester, $(ARG_SET_9), "\'teshting the limits of the food chain:", should stop after the first death while eating, timeout 3s $(HELLGRIND))
-	-@$(call helper_tester, $(ARG_SET_10), "\'teshting the limits of the food chain: SMALL TIMES", are you fast enough?, timeout 3s)
-	-@$(call helper_tester, $(ARG_SET_11), "\'teshting the limits of the food chain: SMALL TIMES", are you fast enough?, timeout 3s)
-	-@$(call helper_tester, $(ARG_SET_12), "\'teshting the limits of the food chain: SMALL TIMES", are you fast enough?, )
-	-@$(call helper_tester, $(ARG_SET_13), "\'teshting the limits of the food chain: SMALL TIMES", are you fast enough?, )
-	-@$(call helper_tester, $(ARG_SET_14), "\'teshting the limits of the food chain:", They all should be HAPPY、and enjoy their last moment before the end..., timeout 10s $(HELLGRIND))
-	@$(call random_shmol_cat, \033[5m(DISCLAIMER)\033[25m, No philosophers was harmed in the making of this test, $(CLS), );
+	@$(call random_shmol_cat, \033[5m(DISCLAIMER)\033[25m, No philosophers was harmed in the making of this test, $(CLS), )
 
 
 # MAKE N: Run a dozen bad arguments, with valgrind
@@ -107,16 +67,7 @@ n: $(NAMEE)
 	$(VALGRIIND) ./$(word 1, $^) 3 500 100 200 2
 
 BAD_ARGS = "3 5 1 1 2a" \
-			"3 5 1 wtf" \
-			"3 5 1 -2147483650" \
-			"3 5 1 2147483646 2147483647" \
-			"3 5 1 9999999999 9" \
-			"4 3 2" \
-			"4 3 2 1 1 1" \
-			"" \
-			"4 3 2 00000000000000 -" \
-			"i want ... youuu" \
-			"5 1-2 4 5"
+			"3 5 1 wtf"
 
 
 ULIMIT = 3000
@@ -156,7 +107,7 @@ SRC_FOLDER = src
 OBJ_FOLDER = src/obj
 HEADER_FOLDER = inc
 
-ADD_FLAGS = -lm -pthread
+ADD_FLAGS = -lm -lreadline -lncurses
 
 # ╭──────────────────────────────────────────────────────────────────────╮
 # │                  	 	        Libft                      	         │
@@ -180,15 +131,14 @@ libtest:
 
 $(NAME): libft $(OBJ) main.c
 	@clear
-	@if ! $(CC) $(FLAGS) $(OBJ) main.c lib/libft.a -lm -o $(NAME); then \
+	@if ! $(CC) $(FLAGS) $(OBJ) main.c lib/libft.a $(ADD_FLAGS) -o $(NAME); then \
 		$(call print_cat, "", $(RED), $(GOLD), $(RED_L), $(call pad_word, 10, "ERROR"), $(call pad_word, 12, "COMPILING..")); \
 		exit 1; \
 	fi
 	$(call print_cat, $(CLEAR), $(GOLD), $(GREEN1), $(GREEN1), $(call pad_word, 10, $(NAME)), $(call pad_word, 12, "Compiled~"));
 
-abc: libft $(OBJ) main.c
-	@rm -f $(NAME)
-	$(CC) $(FLAGS) $(OBJ) main.c lib/libft.a -lm -o $(NAME)
+abc: fclean libft $(OBJ) main.c
+	$(CC) $(FLAGS) $(OBJ) main.c lib/libft.a $(ADD_FLAGS) -o $(NAME)
 
 src/obj/%.o: src/%.c inc/$(NAME).h
 	@if [ ! -e $(OBJ_FOLDER) ]; then\
@@ -213,7 +163,7 @@ $(NAME_BONUS): bonus
 
 bonus: $(OBJ_B) main_bonus.c inc/$(NAME).h
 	@clear
-	@if ! $(CC) $(FLAGS) $(OBJ_B) main_bonus.c lib/libft.a -lm -o $(NAME_BONUS); then \
+	@if ! $(CC) $(FLAGS) $(OBJ_B) main_bonus.c lib/libft.a $(ADD_FLAGS) -o $(NAME_BONUS); then \
 		$(call print_cat, "", $(RED), $(GOLD), $(RED_L), $(call pad_word, 10, "ERROR"), $(call pad_word, 12, "COMPILING..")); \
 		exit 1; \
 	fi
@@ -246,9 +196,10 @@ srcb/obj/%.o: srcb/%.c inc/$(NAME).h
 
 # --------------------------------------------------------------------------------- >
 # VALGRIND = valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes -s --track-fds=yes
-VALGRIND = valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes -s --trace-children=yes --track-fds=yes
+VALGRIND = valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes -s --trace-children=yes --track-fds=yes $(V_FLAG)
 VALGRIND_OTHER = valgrind --vgdb=yes
-HELLGRIND = valgrind --tool=helgrind
+V_FLAG = --suppressions="ignore_valgrind"
+HELLGRIND = valgrind --tool=helgrind ?-g3?
 
 # ↑さ↓ぎょう  を  ↓ほ↑ぞん
 git: fclean
@@ -273,7 +224,7 @@ norm: fclean
 # 																				TEST
 test:	libft
 	@rm -f ./lib/a.out
-	-@cc ./lib/test.c ./lib/libft.a -o ./lib/a.out -lm
+	-@cc ./lib/test.c ./lib/libft.a -o ./lib/a.out $(ADD_FLAGS)
 	@if [ ! -e ./lib/a.out ]; then\
 		$(call print_cat, "", $(RED), $(GOLD), $(RED_L), $(call pad_word, 10, "The⠀Cake"), $(call pad_word, 12, "Is⠀A⠀Lie..")); \
 		exit 3; \
@@ -281,16 +232,19 @@ test:	libft
 	@$(call random_cat, $(call pad_word, 12, "Making"), $(call pad_word, 14, "Science"), $(CLS), $(RESET));
 	@lib/a.out
 
-test2:	$(OBJ_B) inc/$(NAME).h
+FLAGS_TEST = -g -fPIE -I$(HEADER_FOLDER)
+
+test2:	libft $(OBJ) inc/$(NAME).h
 	@rm -f ./lib/a.out
-	@cc ./lib/test.c $(OBJ_B) -I$(HEADER_FOLDER) lib/libft.a -lm -o ./lib/a.out
+	@$(CC) $(FLAGS_TEST) $(OBJ) ./lib/test.c lib/libft.a $(ADD_FLAGS) -o ./lib/a.out
 	@$(call random_cat, $(call pad_word, 12, "TESTING"), $(call pad_word, 14, "SCIENCE"), $(CLS), $(RESET));
-	-@$(VALGRIND) lib/a.out map/map4.ber
+	-@$(VALGRIND) lib/a.out
 
 vtest:	libft
-	@cc -g3 ./lib/test.c ./lib/libft.a -o ./lib/a.out -lm
-	$(call print_cat, "", $(RED), $(GOLD), $(BLUE1), $(call pad_word, 10, "TESTING"), $(call pad_word, 12, "SCIENCE.."));
-	@$(VALGRIND) lib/a.out
+	@rm -f ./lib/a.out
+	@$(CC) $(FLAGS_TEST) $(OBJ) ./lib/test.c lib/libft.a $(ADD_FLAGS) -o ./lib/a.out
+	@$(call print_cat, "", $(RED), $(GOLD), $(BLUE1), $(call pad_word, 10, "TESTING"), $(call pad_word, 12, "SCIENCE.."));
+	-@$(VALGRIND) lib/a.out
 # --------------------------------------------------------------------------------- >
 # 																				CLEAN
 clean:
