@@ -6,12 +6,12 @@
 /*   By: kalipso <kalipso@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/19 17:54:09 by kalipso           #+#    #+#             */
-/*   Updated: 2024/07/02 04:16:52 by kalipso          ###   ########.fr       */
+/*   Updated: 2024/07/10 16:54:26 by kalipso          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/libft.h"
-#include "../inc/philosophers.h"
+#include "../inc/minishell.h"
 
 /*******************************************************************************
 ******************************************************************************/
@@ -56,29 +56,19 @@ You can set various limits using ulimit. Here are some common options:
 ///////////////////////////////////////////////////////////////////////////////]
 int	main(int ac, char **av, char **env)
 {
-	int		a;
-	int		b;
-	int		i;
-	char	*string;
+	char	*string = " echo \"\"\"hello everyone ' ' i  am: \"something >else";
+	char	*string2;
+	int i = 6;
 
-	put("we want:\n\
-		→ 0: cos=1, sin =0\n\
-		↓ 1: cos=0, sin =1\n\
-		← 2: cos=-1, sin =0\n\
-		↑ 3: cos=0, sin =-1\n");
-	i = -1;
-	while (++i < 4)
-	{
-		b = (int)sin(i * PI / 2);
-		a = (int)cos(i * PI / 2);
-		printf("%d: cos= %.1d, sin = %.1d\n", i, a, b);
-	}
-	printf("--->%d\n\n\n\n", (int)round(0.49));
-	string = str("asdf%dalosdif", 123);
-	put("=%s=\n", string);
-	ft_print_cat(i, string, 0b01);
-	free(string);
-	put("HELLO AGAIN=\n");
+	string2 = ft_extract_quotes(&string[i], &i, string[i]);
+	put("string2(i=%d)=%s\n", i, string2);
+	free_s(string2);
+	string2 = ft_extract_quotes(&string[i], &i, string[i]);
+	put("string2(i=%d)=%s\n", i, string2);
+	free_s(string2);
+	printf("string[%d]=%s=\n", i, &string[i]);
+	// string = trim_white(string, " \n\t");
+	// put("trimmed=%s=\n", string);
 	return (0);
 }
 ///////////////////////////////////////////////////////////////////////////////]

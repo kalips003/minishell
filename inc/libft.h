@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libft.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: agallon <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: kalipso <kalipso@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/23 20:06:26 by agallon           #+#    #+#             */
-/*   Updated: 2024/07/05 19:47:17 by agallon          ###   ########.fr       */
+/*   Updated: 2024/07/09 16:10:14 by kalipso          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,7 @@ char		**split(char *str, char *sep);
 //
 int			len(char *s);
 int			len_m(char *s, char *dico);
+int			len_n(char *s, char *dico);
 int			wii(char c, char *dico);
 int			tab_size(char **tab);
 //
@@ -81,7 +82,5 @@ int			find_str(char *str, char *str_pattern);
 int			same_str(char *str, char *str_pattern);
 //	QUARANTINE
 char		*fjoin(int how_many_string, int bit_32, ...);
-//	EXEC
-void		ft_exec(char *raw_cmd, char **env);
 
 #endif

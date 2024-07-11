@@ -39,6 +39,24 @@ int	len_m(char *s, char *dico)
 }
 
 ////////////////////////////////////////////////////////
+//  return lenght, skips char in the dico
+int	len_n(char *s, char *dico)
+{
+	int		len;
+
+	len = 0;
+	if (!s)
+		return (-1);
+	while (*s)
+	{
+		if (wii(*s, dico) < 0)
+			len++;
+		s++;
+	}
+	return (len);
+}
+
+////////////////////////////////////////////////////////
 //  return position of c in dico, -1 if not found
 int	wii(char c, char *dico)
 {
