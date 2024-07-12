@@ -157,4 +157,5 @@ int	ft_heredoc(t_data *data, t_cmd *cmd)
 	}
 	else
 		return (close(fd[1]), dup_close(fd[0], STDIN), wait(NULL), 0);
+		// return (close(fd[1]), dup_close(fd[0], STDIN), waitpid(pid, NULL, 0), 0);
 }
