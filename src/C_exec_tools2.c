@@ -139,10 +139,10 @@ int	ft_heredoc(t_data *data, t_cmd *cmd)
 	char	*tmp;
 
 	if (pipe(fd) == -1)
-		return (perror("pipe"), 1);
+		return (perror("pipe"), end(data, 4), 1);
 	pid = fork();
 	if (pid == -1)
-		return (perror("fork"), close(fd[0]), close(fd[1]), 1);
+		return (perror("fork"), close(fd[0]), close(fd[1]), end(data, 4), 1);
 	if (!pid)
 	{
 		close(fd[0]);
