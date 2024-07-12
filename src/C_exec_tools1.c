@@ -6,7 +6,7 @@
 /*   By: kalipso <kalipso@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/11 07:30:05 by kalipso           #+#    #+#             */
-/*   Updated: 2024/07/12 03:09:33 by kalipso          ###   ########.fr       */
+/*   Updated: 2024/07/12 03:48:45 by kalipso          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,8 +31,7 @@ void	h_734_redirection(t_data *data, t_cmd *cmd)
 			return (perror(cmd->in_file), end(data, 5));
 	}
 	else if (cmd->in_file && cmd->in_bit == 2)
-		if (ft_heredoc(data, cmd))
-			end(data, 4);
+		return (ft_heredoc(data, cmd), (void)0);
 	if (cmd->out_file)
 	{
 		if (cmd->out_bit == 1)
@@ -46,8 +45,10 @@ void	h_734_redirection(t_data *data, t_cmd *cmd)
 			return (perror(cmd->out_file), end(data, 5));
 		}
 	}
-	// dup_close(cmd->fd_in, STDIN_FILENO);
-	// dup_close(cmd->fd_out, STDOUT_FILENO);
+	if (cmd->fd_in)
+		dup_close(cmd->fd_in, STDIN_FILENO);
+	if (cmd->fd_out)
+		dup_close(cmd->fd_out, STDOUT_FILENO);
 }
 
 ///////////////////////////////////////////////////////////////////////////////]
