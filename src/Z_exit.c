@@ -6,7 +6,7 @@
 /*   By: kalipso <kalipso@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/02 06:21:51 by kalipso           #+#    #+#             */
-/*   Updated: 2024/07/11 07:30:56 by kalipso          ###   ########.fr       */
+/*   Updated: 2024/07/12 02:14:09 by kalipso          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,10 @@ void	clear_cmd(t_data *data)
 			free_tab(ptr2->cmd_arg);
 			free_s(ptr2->in_file);
 			free_s(ptr2->out_file);
+			// if (ptr2->fd_in > 0)
+			// 	close(ptr2->fd_in);
+			// if (ptr2->fd_out > 0)
+			// 	close(ptr2->fd_out);
 			ptr_temp = ptr2->next;
 			free_s(ptr2);
 			ptr2 = ptr_temp;
