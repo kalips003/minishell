@@ -20,7 +20,7 @@ void	ft_heredoc(t_data *data, t_cmd *cmd);
 
 ///////////////////////////////////////////////////////////////////////////////]
 /*******************************************************************************
-	takes data->cmd with arguments, 
+	takes data->cmd with arguments,
 		create the big_brother that will do 1 pipeline
 	return only:
 		0 on succcess and -1 to exit (for now)
@@ -60,6 +60,7 @@ int	ft_big_brother(t_data *data, t_cmd2 *cmd)
 		return (perror(ERRM"fork"), 1);
 	if (!pid)
 	{
+		// sublim(data, cmd);
 		cmd2 = cmd->cmd;
 		while (cmd2->next)
 		{
