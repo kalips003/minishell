@@ -6,15 +6,16 @@
 /*   By: kalipso <kalipso@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/02 06:21:51 by kalipso           #+#    #+#             */
-/*   Updated: 2024/07/13 12:10:59 by kalipso          ###   ########.fr       */
+/*   Updated: 2024/07/13 13:09:14 by kalipso          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int		initialization(int ac, char **av, char **env, t_data *data);
-void	clear_cmd(t_data *data);
-void	end(t_data *data, int exit_code);
+int			initialization(int ac, char **av, char **env, t_data *data);
+static void	copy_env(t_data *data, char **env);
+void		clear_cmd(t_data *data);
+void		end(t_data *data, int exit_code);
 
 ///////////////////////////////////////////////////////////////////////////////]
 // ini
@@ -25,9 +26,24 @@ int	initialization(int ac, char **av, char **env, t_data *data)
 	if (ac != 1)
 		return (put(ERR"Wrong number of arguments\n"), exit(0), 1);
 	ft_memset(data, 0, sizeof(t_data));
-	data->env = env;
+	copy_env(data, env);
 	data->fd_in_original = dup(STDIN_FILENO);
 	return (0);
+}
+
+static void	copy_env(t_data *data, char **env)
+{
+	int		i;
+	char	*string;
+
+	if (!env)
+		return ;
+	i = -1;
+	while (env[++i])
+	{
+		string = str("%1s", env[i]);
+		data->env = expand_tab(data->env, string);
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////]
@@ -66,6 +82,7 @@ void	clear_cmd(t_data *data)
 void	end(t_data *data, int exit_code)
 {
 	free_tab(data->history);
+	free_tab(data->env);
 	clear_cmd(data);
 	rl_clear_history();
 	if (data->fd_in_original >= 0)

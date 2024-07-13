@@ -112,8 +112,7 @@ void	ft_exec(t_data *data, t_cmd *cmd)
 {
 	char	*cmd_exe;
 
-	if (!cmd->cmd_arg)
-		(put(ERRM"empty cmd->cmd_arg\n"), end(data, 2));
+	sublim(data, cmd);
 	h_734_redirection(data, cmd);
 	h_385_builtin(data, cmd);
 	cmd_exe = find_cmd(cmd->cmd_arg[0], data->env);
