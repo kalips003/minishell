@@ -6,7 +6,7 @@
 /*   By: kalipso <kalipso@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/15 17:11:46 by kalipso           #+#    #+#             */
-/*   Updated: 2024/07/11 16:42:34 by kalipso          ###   ########.fr       */
+/*   Updated: 2024/07/13 10:52:54 by kalipso          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,10 @@ char	*trim_white(char *input, char *dico)
 }
 
 ///////////////////////////////////////////////////////////////////////////////]
+// duplicate fd_replace onto > fd_erase
+// close fd_replace
+// dup_close(fd[4], fd[0])
+// fd[0] = 4; close(fd[4])
 // dup2 and close fd
 void	dup_close(int fd_replace, int fd_erase)
 {

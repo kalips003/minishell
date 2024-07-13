@@ -35,7 +35,7 @@ ARG_SET_2 = grep "error" < log.txt | sort | uniq > errors.txt 2> errors.log
 ARG_SET_3 = cmd1 < infile | cmd2 > outfile | cmd3 >> appendfile
 ARG_SET_3 = cmd1 < $FILE | cmd2 "> outfile" | cmd3 && cmd3 >> appendfile
 
-ARG_SET_4 = echo asdlkjfss ; > adsf >> aaaaaaaaaaaa << END | echo a || echo b
+ARG_SET_4 = echo asdlkjfss ; > adsdnfbsadjff >> aaaaaaaaaaaa << END | echo a || echo b
 ARG_SET_5 = echo a | wc -c | <<END cat > out3 && echo all done
 
 b: $(NAMEE)
