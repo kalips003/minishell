@@ -249,7 +249,7 @@ vtest:	libft
 # --------------------------------------------------------------------------------- >
 # 																				CLEAN
 clean:
-	@rm -rf $(OBJ_FOLDER)
+	@rm -rf $(OBJ_FOLDER) ./out
 	@$(call print_cat, $(CLEAR), $(COLOR_2R_2G_5B), $(COLOR_3R_2G_0B), $(COLOR_4R_5G_0B), $(call pad_word, 10, "Objects"), $(call pad_word, 12, "Exterminated"));
 
 fclean: clean
