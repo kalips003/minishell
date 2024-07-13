@@ -6,7 +6,7 @@
 /*   By: kalipso <kalipso@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/11 08:28:22 by kalipso           #+#    #+#             */
-/*   Updated: 2024/07/12 01:49:54 by kalipso          ###   ########.fr       */
+/*   Updated: 2024/07/13 14:35:36 by kalipso          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,6 @@ int	ft_parsing(t_data *data, char *input)
 		if (!ptr || ptr->error)
 			return (1);
 	}
-	sublim(data);
 	return (0);
 }
 

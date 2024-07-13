@@ -6,7 +6,7 @@
 /*   By: kalipso <kalipso@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/11 07:30:05 by kalipso           #+#    #+#             */
-/*   Updated: 2024/07/13 12:07:05 by kalipso          ###   ########.fr       */
+/*   Updated: 2024/07/13 12:57:47 by kalipso          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 
 
 void	h_734_redirection(t_data *data, t_cmd *cmd);
-int		h_385_builtin(t_data *data, t_cmd *cmd);
 char	*find_cmd(char *command, char **env);
 char	*find_parsing(char *command, char **env);
 char	**parse_path(char **env);
@@ -40,21 +39,9 @@ void	h_734_redirection(t_data *data, t_cmd *cmd)
 		else if (cmd->out_bit == 2)
 			cmd->fd_out = open(cmd->out_file, (O_WRONLY | O_CREAT | O_APPEND), 0777);
 		if (cmd->fd_out < 0)
-		{
-			// if (cmd->in_file && cmd->in_bit == 1)
-			// 	close(cmd->fd_in);
 			return (perror(cmd->out_file), end(data, 5));
-		}
 		dup_close(cmd->fd_out, STDOUT_FILENO);
 	}
-}
-
-///////////////////////////////////////////////////////////////////////////////]
-int	h_385_builtin(t_data *data, t_cmd *cmd)
-{
-	if (same_str(cmd->cmd_arg[0], "exit"))
-		end(data, 255);
-	return (0);
 }
 
 ///////////////////////////////////////////////////////////////////////////////]
@@ -85,7 +72,7 @@ char	*find_parsing(char *command, char **env)
 
 	paths = parse_path(env);
 	if (!paths)
-		return (put(RED"ERROR--->$PATH:\n%t"RESET, env), NULL);
+		return (put(RED"ERROR--->$PATH:\n%t\n"RESET, env), NULL);
 	cmd = NULL;
 	i = -1;
 	while (paths[++i])

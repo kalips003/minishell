@@ -6,7 +6,7 @@
 /*   By: kalipso <kalipso@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/11 16:55:43 by marvin            #+#    #+#             */
-/*   Updated: 2024/07/13 12:08:06 by kalipso          ###   ########.fr       */
+/*   Updated: 2024/07/13 14:45:06 by kalipso          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,7 +105,7 @@ int				ft_parsing(t_data *data, char *input);
 // 
 char		*ft_extract_word(char *raw_line, int *i);
 // 
-void		sublim(t_data *data);
+void	sublim(t_data *data, t_cmd *ptr2);
 t_cmd		*new_node(t_cmd *previous);
 t_cmd2		*new_cmd(t_cmd2 *previous, char c);
 

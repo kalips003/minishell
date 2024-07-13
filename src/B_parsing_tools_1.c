@@ -6,47 +6,74 @@
 /*   By: kalipso <kalipso@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/11 16:26:09 by kalipso           #+#    #+#             */
-/*   Updated: 2024/07/12 00:16:01 by kalipso          ###   ########.fr       */
+/*   Updated: 2024/07/13 15:17:42 by kalipso          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void		sublim(t_data *data);
-static char	*sublim_helper(t_data *data, char *string);
+void	sublim(t_data *data, t_cmd *cmd);
+char	*sublim_helper(t_data *data, char *string);
+static char	*sublim_helper2(t_data *data, char *string);
 t_cmd		*new_node(t_cmd *previous);
 t_cmd2		*new_cmd(t_cmd2 *previous, char c);
 
 ///////////////////////////////////////////////////////////////////////////////]
 // cmd1 < $FILE | cmd2 "> outfile" | cmd3 && cmd3 >> appendfile
-void	sublim(t_data *data)
+// subliiim one child's char **
+void	sublim(t_data *data, t_cmd *cmd)
 {
-	t_cmd2	*ptr;
-	t_cmd	*ptr2;
 	char	**ptr3;
 
-	ptr = data->cmd;
-	while (ptr)
+	if (!cmd->cmd_arg)
+		(print_fd(2, ERRM"empty cmd->cmd_arg\n"), end(data, 2));
+	ptr3 = cmd->cmd_arg;
+	while (ptr3 && *ptr3)
 	{
-		ptr2 = ptr->cmd;
-		while (ptr2)
-		{
-			ptr3 = ptr2->cmd_arg;
-			while (ptr3 && *ptr3)
-			{
-				*ptr3 = sublim_helper(data, *ptr3);
-				ptr3++;
-			}
-			ptr2 = ptr2->next;
-		}
-		ptr = ptr->next;
+		*ptr3 = sublim_helper(data, *ptr3);
+		ptr3++;
 	}
 }
 
-static char	*sublim_helper(t_data *data, char *string)
+char	*sublim_helper(t_data *data, char *string)
 {
-	(void)data;
-	return (trim_white(string, "'\""));
+	if (string[0] == '\'')
+		return (trim_white(string, "'"));
+	else if (string[0] == '"')
+		string = trim_white(string, "\"");
+	string = sublim_helper2(data, string);
+	if (!string)
+		(print_fd(2, ERRM"malloc?\n"), end(data, 45));
+	return (string);
+
+}
+
+static char	*sublim_helper2(t_data *data, char *string)
+{
+	int		i;
+	int		lenght;
+	char	*name;
+	char	*value;
+	char	*string2;
+
+	i = -1;
+	while (string[++i])
+	{
+		if (string[i] == '$' && string[i + 1] && wii(string[i + 1], "$ \n\t\"\n") < 0)
+		// ft_replace_var(string, &string[i + 1])
+		{
+			name = str("%1.*s", len_m(&string[i + 1], "$ \n\t\"\n"), &string[i + 1]);
+			lenght = len(name);
+			value = getenv(name);
+			name = free_s(name);
+			string2 = str("%1.*s%*s%1s", i, string, !!(value) , value, &string[i + 1 +lenght]);
+			free_s(string);
+			string = string2;
+		}
+	}
+	return (string);
+	// if ($$)
+	// 	get_process_pid
 }
 
 ///////////////////////////////////////////////////////////////////////////////]

@@ -6,7 +6,7 @@
 /*   By: kalipso <kalipso@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/11 16:53:58 by marvin            #+#    #+#             */
-/*   Updated: 2024/07/12 00:32:28 by kalipso          ###   ########.fr       */
+/*   Updated: 2024/07/13 12:20:40 by kalipso          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,9 +120,20 @@ env: Display environment variables with no options or arguments.
 exit: Exit the shell with no options.
 
 
+cd: Change directory.
+exit: Terminate the shell.
+echo: Print arguments to the standard output.
+pwd: Print current working directory.
+export: Set environment variables.
+unset: Unset environment variables.
+history: Display command history.
+alias: Define or display aliases.
+type: Display information about commands (alias, built-in, executable).
+help: Display help information about built-in commands or shell features.
 
-waitpid(pid, &status, 0)
 
+
+	waitpid(pid, &status, 0)
 WIFEXITED(status): Returns true if the child terminated normally (by calling exit or returning from main).
 WEXITSTATUS(status): Returns the exit status of the child. This should only be used if WIFEXITED(status) is true.
 WIFSIGNALED(status): Returns true if the child process was terminated by a signal.
