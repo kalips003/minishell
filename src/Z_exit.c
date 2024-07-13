@@ -6,7 +6,7 @@
 /*   By: kalipso <kalipso@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/02 06:21:51 by kalipso           #+#    #+#             */
-/*   Updated: 2024/07/12 02:14:09 by kalipso          ###   ########.fr       */
+/*   Updated: 2024/07/13 12:10:59 by kalipso          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ int	initialization(int ac, char **av, char **env, t_data *data)
 		return (put(ERR"Wrong number of arguments\n"), exit(0), 1);
 	ft_memset(data, 0, sizeof(t_data));
 	data->env = env;
+	data->fd_in_original = dup(STDIN_FILENO);
 	return (0);
 }
 
@@ -67,5 +68,7 @@ void	end(t_data *data, int exit_code)
 	free_tab(data->history);
 	clear_cmd(data);
 	rl_clear_history();
+	if (data->fd_in_original >= 0)
+		close(data->fd_in_original);
 	exit(exit_code);
 }

@@ -6,7 +6,7 @@
 /*   By: kalipso <kalipso@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/11 07:30:05 by kalipso           #+#    #+#             */
-/*   Updated: 2024/07/12 03:48:45 by kalipso          ###   ########.fr       */
+/*   Updated: 2024/07/13 12:07:05 by kalipso          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,10 +29,11 @@ void	h_734_redirection(t_data *data, t_cmd *cmd)
 		cmd->fd_in = open(cmd->in_file, O_RDONLY);
 		if (cmd->fd_in < 0)
 			return (perror(cmd->in_file), end(data, 5));
+		dup_close(cmd->fd_in, STDIN_FILENO);
 	}
 	else if (cmd->in_file && cmd->in_bit == 2)
-		return (ft_heredoc(data, cmd), (void)0);
-	if (cmd->out_file)
+		ft_heredoc(data, cmd);
+	if (cmd->out_file && cmd->out_bit)
 	{
 		if (cmd->out_bit == 1)
 			cmd->fd_out = open(cmd->out_file, (O_WRONLY | O_CREAT | O_TRUNC), 0777);
@@ -40,15 +41,12 @@ void	h_734_redirection(t_data *data, t_cmd *cmd)
 			cmd->fd_out = open(cmd->out_file, (O_WRONLY | O_CREAT | O_APPEND), 0777);
 		if (cmd->fd_out < 0)
 		{
-			if (cmd->in_file && cmd->in_bit == 1)
-				close(cmd->fd_in);
+			// if (cmd->in_file && cmd->in_bit == 1)
+			// 	close(cmd->fd_in);
 			return (perror(cmd->out_file), end(data, 5));
 		}
-	}
-	if (cmd->fd_in)
-		dup_close(cmd->fd_in, STDIN_FILENO);
-	if (cmd->fd_out)
 		dup_close(cmd->fd_out, STDOUT_FILENO);
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////]

@@ -6,7 +6,7 @@
 /*   By: kalipso <kalipso@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/11 16:55:43 by marvin            #+#    #+#             */
-/*   Updated: 2024/07/12 01:13:18 by kalipso          ###   ########.fr       */
+/*   Updated: 2024/07/13 12:08:06 by kalipso          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,7 @@ typedef struct s_data
 {
 	char	**env;
 	char	**history;
+	int		fd_in_original;
 	t_cmd2	*cmd;
 }	t_data;
 
@@ -121,7 +122,7 @@ int		ft_exec_bigbro(t_data *data);
 void	ft_exec(t_data *data, t_cmd *cmd);
 int		ft_child(t_data *data, t_cmd *cmd);
 int		ft_big_brother(t_data *data, t_cmd2 *cmd);
-int		ft_heredoc(t_data *data, t_cmd *cmd);
+void		ft_heredoc(t_data *data, t_cmd *cmd);
 /********************************
 		D
 ********************************/

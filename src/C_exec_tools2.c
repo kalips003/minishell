@@ -13,36 +13,10 @@
 #include "minishell.h"
 
 int		ft_exec_bigbro(t_data *data);
-void	ft_exec(t_data *data, t_cmd *cmd);
-int		ft_child(t_data *data, t_cmd *cmd);
 int		ft_big_brother(t_data *data, t_cmd2 *cmd);
-int		ft_heredoc(t_data *data, t_cmd *cmd);
-
-///////////////////////////////////////////////////////////////////////////////]
-/*******************************************************************************
-	takes a cmd link, redirect to correct fd, execute it, end the child
-******************************************************************************/
-void	ft_exec(t_data *data, t_cmd *cmd)
-{
-	char	*cmd_exe;
-
-	if (!cmd->cmd_arg)
-		(put(ERRM"empty cmd->cmd_arg\n"), end(data, 2));
-	h_734_redirection(data, cmd);
-	h_385_builtin(data, cmd);
-	cmd_exe = find_cmd(cmd->cmd_arg[0], data->env);
-	if (!cmd_exe)
-	{
-		print_fd(2, ERRM"error: %s: not found\n", cmd->cmd_arg[0]);
-		end(data, 127);
-	}
-	if (execve(cmd_exe, cmd->cmd_arg, data->env) == -1)
-	{
-		perror(ERRM"error execve");
-		free_s(cmd_exe);
-		end(data, 1);
-	}
-}
+int		ft_child(t_data *data, t_cmd *cmd);
+void	ft_exec(t_data *data, t_cmd *cmd);
+void	ft_heredoc(t_data *data, t_cmd *cmd);
 
 ///////////////////////////////////////////////////////////////////////////////]
 /*******************************************************************************
@@ -131,21 +105,49 @@ int	ft_child(t_data *data, t_cmd *cmd)
 }
 
 ///////////////////////////////////////////////////////////////////////////////]
+/*******************************************************************************
+	takes a cmd link, redirect to correct fd, execute it, end the child
+******************************************************************************/
+void	ft_exec(t_data *data, t_cmd *cmd)
+{
+	char	*cmd_exe;
+
+	if (!cmd->cmd_arg)
+		(put(ERRM"empty cmd->cmd_arg\n"), end(data, 2));
+	h_734_redirection(data, cmd);
+	h_385_builtin(data, cmd);
+	cmd_exe = find_cmd(cmd->cmd_arg[0], data->env);
+	if (!cmd_exe)
+	{
+		print_fd(2, ERRM"error: %s: not found\n", cmd->cmd_arg[0]);
+		end(data, 127);
+	}
+	if (execve(cmd_exe, cmd->cmd_arg, data->env) == -1)
+	{
+		perror(ERRM"error execve");
+		free_s(cmd_exe);
+		end(data, 1);
+	}
+}
+
+///////////////////////////////////////////////////////////////////////////////]
 // create child that will pipe the input
-int	ft_heredoc(t_data *data, t_cmd *cmd)
+void	ft_heredoc(t_data *data, t_cmd *cmd)
 {
 	int		fd[2];
 	pid_t	pid;
 	char	*tmp;
 
 	if (pipe(fd) == -1)
-		return (perror("pipe"), end(data, 4), 1);
+		return (perror("pipe"), end(data, 4));
 	pid = fork();
 	if (pid == -1)
-		return (perror("fork"), close(fd[0]), close(fd[1]), end(data, 4), 1);
+		return (perror("fork"), close(fd[0]), close(fd[1]), end(data, 4));
 	if (!pid)
 	{
 		close(fd[0]);
+		dup_close(data->fd_in_original, STDIN);
+		data->fd_in_original = -1;
 		while (1)
 		{
 			tmp = readline(C_415"heredoc:"RESET);
@@ -156,6 +158,11 @@ int	ft_heredoc(t_data *data, t_cmd *cmd)
 		}
 	}
 	else
-		return (close(fd[1]), dup_close(fd[0], STDIN), wait(NULL), 0);
+	{
+		close(fd[1]);
+		dup_close(fd[0], STDIN);
+		waitpid(pid, NULL, 0);
+	}
 		// return (close(fd[1]), dup_close(fd[0], STDIN), waitpid(pid, NULL, 0), 0);
+		// return (close(fd[1]), dup_close(fd[0], STDIN), wait(NULL), 0);
 }
