@@ -33,6 +33,7 @@ int	ft_exec_bigbro(t_data *data)
 	cmd = data->cmd;
 	if (!data->cmd)
 		return (perror(ERRM"empty args struct"), 1);
+		// data->cmd = expand_tab(data->cmd, str("cat"));
 	rtrn = 0;
 	while (cmd)
 	{
