@@ -6,7 +6,7 @@
 /*   By: kalipso <kalipso@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/11 16:26:09 by kalipso           #+#    #+#             */
-/*   Updated: 2024/07/13 15:17:42 by kalipso          ###   ########.fr       */
+/*   Updated: 2024/07/13 15:52:45 by kalipso          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,8 @@ void	sublim(t_data *data, t_cmd *cmd)
 	char	**ptr3;
 
 	if (!cmd->cmd_arg)
-		(print_fd(2, ERRM"empty cmd->cmd_arg\n"), end(data, 2));
+		cmd->cmd_arg = expand_tab(cmd->cmd_arg, str("cat"));
+	// 	(print_fd(2, ERRM"empty cmd->cmd_arg\n"), end(data, 2));
 	ptr3 = cmd->cmd_arg;
 	while (ptr3 && *ptr3)
 	{
