@@ -6,7 +6,7 @@
 /*   By: kalipso <kalipso@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/19 17:54:09 by kalipso           #+#    #+#             */
-/*   Updated: 2024/07/13 15:17:06 by kalipso          ###   ########.fr       */
+/*   Updated: 2024/07/15 21:01:23 by kalipso          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,42 +52,24 @@ You can set various limits using ulimit. Here are some common options:
 // #define funct(ap, type)    (*(type *)((ap += sizeof(type)) - sizeof(type)))
 ******************************************************************************/
 #define PI 3.14159265358979323846
-static char	*sublim_helper2(t_data *data, char *string)
-{
-	int		i;
-	int		lenght;
-	char	*name;
-	char	*value;
-	char	*string2;
-
-	i = -1;
-	while (string[++i])
-	{
-		if (string[i] == '$' && string[i + 1] && wii(string[i + 1], "$ \n\t\"\n") < 0)
-		// ft_replace_var(string, &string[i + 1])
-		{
-			name = str("%1.*s", len_m(&string[i + 1], "$ \n\t\"\n"), &string[i + 1]);
-			lenght = len(name);
-			value = getenv(name);
-			name = free_s(name);
-			string2 = str("%1.*s%*s%1s", i, string, !!(value) , value, &string[i + 1 +lenght]);
-			free_s(string);
-			string = string2;
-		}
-	}
-	return (string);
-	// if ($$)
-	// 	get_process_pid
-}
+#define BUF_WD 1024
 ///////////////////////////////////////////////////////////////////////////////]
 int	main(int ac, char **av, char **env)
 {
-	t_data *data;
-	// char *value = str("AHAHAH---------------\n\"$PATH\" \n----------HAAHAH");
-	char *value = str("exit");
-	value = sublim_helper2(data, value);
-	put("PATH=%s=\n", value);
-	free_s(value);
+	char	**tab = NULL;
+
+	tab = expand_tab(tab, str("a=hello1"));
+	tab = expand_tab(tab, str("b=hello2"));
+	tab = expand_tab(tab, str("c=hello3"));
+	tab = expand_tab(tab, str("d=hello4"));
+	put("old:\n%-t", tab);
+	tab = pop_entry(tab, "d=");
+	put("new:\n%-t", tab);
+	tab = pop_entry(tab, "a=");
+	put("new:\n%-t", tab);
+	// value = sublim_helper2(data, value);
+	put(ERR0 ERR1 ERR2 ERR3 ERR4 ERR5 ERR6 ERR7 ERR8 ERR9"PATH=%s=\n", "");
+	free_tab(tab);
 	return (0);
 }
 ///////////////////////////////////////////////////////////////////////////////]

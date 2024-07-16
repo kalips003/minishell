@@ -6,7 +6,7 @@
 /*   By: kalipso <kalipso@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/14 14:19:41 by kmendes-          #+#    #+#             */
-/*   Updated: 2024/07/04 14:38:28 by kalipso          ###   ########.fr       */
+/*   Updated: 2024/07/16 05:11:22 by kalipso          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,18 @@
 # define COLORS_H
 
 # define ERR "\033[0;31mError - \e[0m"
-# define ERRM "\033[0;32mError - \e[0m"
-# define ERR1 "\033[0;33mError - \e[0m"
+# define ERRM "\033[0;48;1mError ( MALLOC )\n\e[0m"
+
+# define ERR0 "\033[38;5;121mError (0)- \e[0m"
+# define ERR1 "\033[38;5;31mError (1)- \e[0m"
+# define ERR2 "\033[38;5;45mError (2)- \e[0m"
+# define ERR3 "\033[38;5;167mError (3)- \e[0m"
+# define ERR4 "\033[38;5;176mError (4)- \e[0m"
+# define ERR5 "\033[38;5;73mError (5)- \e[0m"
+# define ERR6 "\033[38;5;100mError (6)- \e[0m"
+# define ERR7 "\033[38;5;73mError (7)- \e[0m"
+# define ERR8 "\033[38;5;92mError (8)- \e[0m"
+# define ERR9 "\033[38;5;82mError (9)- \e[0m"
 
 # define CLEAR "\e[2J\e[H"
 # define CLS "\e[2J\e[H"
@@ -301,7 +311,7 @@ COMBINAISONS: BOLD_BLACK "\033[30;1m"
     [4(0-8)m: Background color [0;4(0-8)m
 
     [0;38;<n>m: ANSI color codes (0-7) foreground      = [0;38;0;<n>m
-    [0;38;<n>m:         Background
+    [0;48;<n>m:         Background
     [38;2;<r>;<g>;<b>m: Truecolor foreground (RGB).
     [48;2;<r>;<g>;<b>m:
     [38;5;<n>m: 256-color foreground (0-255).

@@ -6,39 +6,16 @@
 /*   By: kalipso <kalipso@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/15 17:11:46 by kalipso           #+#    #+#             */
-/*   Updated: 2024/07/13 10:52:54 by kalipso          ###   ########.fr       */
+/*   Updated: 2024/07/16 04:11:20 by kalipso          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-char		*trim_white(char *input, char *dico);
 void		dup_close(int fd_replace, int fd_erase);
-
-///////////////////////////////////////////////////////////////////////////////]
-// trim leading and trailing dico
-// free the original
-// 	" \n\t"
-char	*trim_white(char *input, char *dico)
-{
-	char	*rtrn;
-	char	*start;
-	int		lenght;
-
-	if (!input)
-		return (NULL);
-	start = input;
-	while (wii(*start, dico) != -1)
-		start++;
-	if (!*start)
-		return (free_s(input), NULL);
-	lenght = len(start);
-	while (lenght > 0 && wii(start[lenght - 1], dico) >= 0)
-		lenght--;
-	rtrn = str("%1.*s", lenght, start);
-	free_s(input);
-	return (rtrn);
-}
+//
+t_cmd		*new_node(t_cmd *previous);
+t_pipeline	*new_cmd(t_pipeline *previous, char c);
 
 ///////////////////////////////////////////////////////////////////////////////]
 // duplicate fd_replace onto > fd_erase
@@ -52,4 +29,39 @@ void	dup_close(int fd_replace, int fd_erase)
 		return ;
 	dup2(fd_replace, fd_erase);
 	close(fd_replace);
+}
+
+///////////////////////////////////////////////////////////////////////////////]
+// 		return new node 1 command
+t_cmd	*new_node(t_cmd *previous)
+{
+	t_cmd	*next;
+
+	next = (t_cmd *)mem(0, sizeof(t_cmd));
+	if (!next)
+		return (NULL);
+	if (previous)
+		previous->next = next;
+	return (next);
+}
+
+// 		return new node 1 pipeline
+t_pipeline	*new_cmd(t_pipeline *previous, char c)
+{
+	t_pipeline	*next;
+
+	next = (t_pipeline *)mem(0, sizeof(t_pipeline));
+	if (!next)
+		return (put(ERRM"error (4)"), NULL);
+	if (previous)
+	{
+		while (previous->next)
+			previous = previous->next;
+		previous->next = next;
+	}
+	next->cmd = new_node(NULL);
+	next->and_or = c;
+	if (!next->cmd)
+		return (put(ERRM"error (4)"), NULL);
+	return (next);
 }

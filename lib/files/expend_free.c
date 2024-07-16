@@ -12,6 +12,12 @@
 
 #include "../../inc/libft.h"
 
+void	*expand(void *ptr, int size, int add);
+char	**expand_tab(char **tab, char *new_line);
+void	*free_tab(char **tab);
+void	*free_s(void *ptr);
+
+///////////////////////////////////////////////////////////////////////////////]
 void	*expand(void *ptr, int size, int add)
 {
 	void	*rtrn;
