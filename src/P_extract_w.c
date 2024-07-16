@@ -1,19 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   B_parsing_tools_2.c                                :+:      :+:    :+:   */
+/*   P_extract_w.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: kalipso <kalipso@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/11 08:28:22 by kalipso           #+#    #+#             */
-/*   Updated: 2024/07/12 01:50:08 by kalipso          ###   ########.fr       */
+/*   Updated: 2024/07/16 03:21:02 by kalipso          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
 char		*ft_extract_word(char *raw_line, int *i);
-static char	*ft_extract_quotes(char *raw_line, int *i, char quote);
+char		*ft_extract_words(char *raw_line, int *i);
+char		*ft_extract_quotes(char *raw_line, int *i, char quote);
 static int	len_m2(char *s, char c);
 
 ///////////////////////////////////////////////////////////////////////////////]
@@ -25,16 +26,39 @@ char	*ft_extract_word(char *raw_line, int *i)
 
 	if (raw_line[0] == '\'' || raw_line[0] == '"')
 		return (ft_extract_quotes(raw_line, i, raw_line[0]));
-	len = len_m(raw_line, " \n\t|&<>\"'");
+	len = len_m(raw_line, " \n\t|&<>\"\'");
 	*i += len;
 	return (str("%1.*s", len, raw_line));
+}
+
+// started at the beginning of a word
+// return until space
+// "      "' sdaf a'"dklfj ;a:'"$ABV
+char	*ft_extract_words(char *raw_line, int *i)
+{
+	int		len;
+	char	*rtrn;
+
+	rtrn = NULL;
+	len = 0;
+	while (raw_line[len])
+	{
+		if (wii(raw_line[len], " \t\n|&<>") >= 0)
+			break ;
+		if (raw_line[len] == '\'' || raw_line[len] == '"')
+			rtrn = join(rtrn, ft_extract_quotes(raw_line, &len, raw_line[len + 1]), 0b11, 0);
+		else
+			rtrn = join(rtrn, ft_extract_word(&raw_line[len], &len), 0b11, 0);
+	}
+	*i += len;
+	return (rtrn);
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 	prend pointer to the beginning of a quote
 		> "text"
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * **/
-static char	*ft_extract_quotes(char *raw_line, int *i, char quote)
+char	*ft_extract_quotes(char *raw_line, int *i, char quote)
 {
 	char	*rtrn;
 	char	*rtrn2;

@@ -12,6 +12,14 @@
 
 #include "../../inc/libft.h"
 
+///////////////////////////////////////////////////////////////////////////////]
+int	len(char *s);
+int	len_m(char *s, char *dico);
+int	len_n(char *s, char *dico);
+int	wii(char c, char *dico);
+int	tab_size(char **tab);
+
+///////////////////////////////////////////////////////////////////////////////]
 int	len(char *s)
 {
 	int		i;

@@ -1,17 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_memset.c                                        :+:      :+:    :+:   */
+/*   malloc.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: kalipso <kalipso@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/09 20:38:07 by agallon           #+#    #+#             */
-/*   Updated: 2024/07/02 00:48:02 by kalipso          ###   ########.fr       */
+/*   Updated: 2024/07/16 02:22:02 by kalipso          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/libft.h"
 
+char	*ft_memset(void *s, char c, int size);
+void	*mem(char c, int size);
+
+///////////////////////////////////////////////////////////////////////////////]
 //  #   set memory block
 char	*ft_memset(void *s, char c, int size)
 {
@@ -27,7 +31,6 @@ char	*ft_memset(void *s, char c, int size)
 	return (str);
 }
 
-////////////////////////////////////////
 //  #   better malloc, that set memory
 void	*mem(char c, int size)
 {

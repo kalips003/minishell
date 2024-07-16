@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: kalipso <kalipso@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/06/11 16:53:58 by marvin            #+#    #+#             */
-/*   Updated: 2024/07/13 12:20:40 by kalipso          ###   ########.fr       */
+/*   Created: 2024/07/14 16:12:38 by kalipso           #+#    #+#             */
+/*   Updated: 2024/07/15 21:07:13 by kalipso          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,7 +140,10 @@ WIFSIGNALED(status): Returns true if the child process was terminated by a signa
 WTERMSIG(status): Returns the signal number that caused the child to terminate. This should only be used if WIFSIGNALED(status) is true.
 
 
-
+BAD TEST
+	echo -nnd salut
+	E'C'HO
+	echo a | grep a
 
 	< !!! >		ccmd that start or end with && ||
 ******************************************************************************/

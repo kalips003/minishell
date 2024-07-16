@@ -27,6 +27,7 @@ NAMEE_BONUS = minishell_b
 
 
 a: $(NAMEE)
+	@rm -rf out && mkdir out
 	@$(call random_shmol_cat, teshting ... $@: $(ARG), 'hav fun ね? ($(word 1, $^))', $(CLS), );
 	./$(word 1, $^)
 
