@@ -18,10 +18,10 @@ int		cmd_type(t_data *data, t_cmd *cmd);
 int		cmd_help(t_data *data, t_cmd *cmd);
 int		cmd_miaou(t_data *data, t_cmd *cmd);
 
-static int skip_duplicate_char()
-{
-	return (0);
-}
+// static int skip_duplicate_char()
+// {
+// 	return (0);
+// }
 ///////////////////////////////////////////////////////////////////////////////]
 // 	cmd_echo; cmd_type; cmd_help; cmd_miaou;
 void	child_builtin(t_data *data, t_cmd *cmd)

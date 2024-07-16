@@ -6,7 +6,7 @@
 /*   By: kalipso <kalipso@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/11 16:26:09 by kalipso           #+#    #+#             */
-/*   Updated: 2024/07/16 07:42:25 by kalipso          ###   ########.fr       */
+/*   Updated: 2024/07/16 13:54:00 by kalipso          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,6 @@ void	sublim_child(t_data *data, t_cmd *cmd)
 	if (!cmd->cmd_arg)
 		cmd->cmd_arg = expand_tab(cmd->cmd_arg, str("cat"));
 	ptr3 = cmd->cmd_arg;
-	int i = 0;
 	while (ptr3 && *ptr3)
 	{
 		*ptr3 = ft_sublim(data, *ptr3);

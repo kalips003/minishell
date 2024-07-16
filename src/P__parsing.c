@@ -6,7 +6,7 @@
 /*   By: kalipso <kalipso@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/11 08:28:22 by kalipso           #+#    #+#             */
-/*   Updated: 2024/07/16 06:42:17 by kalipso          ###   ########.fr       */
+/*   Updated: 2024/07/16 15:52:46 by kalipso          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,6 @@ char			*rtrn_var(char **env, char *to_extract);
 int	ft_parsing(t_data *data, char *input)
 {
 	int		i;
-	int		last;
 	t_cmd	*ptr;
 
 	clear_cmd(data);
@@ -37,7 +36,6 @@ int	ft_parsing(t_data *data, char *input)
 	i = 0;
 	while (input[i])
 	{
-		
 		if (wii(input[i], " \n\t") >= 0 && ++i)
 			continue ;
 		else if (input[i] == '|' || input[i] == '&')
@@ -46,6 +44,7 @@ int	ft_parsing(t_data *data, char *input)
 			ft_extract_redirection(&input[i], &i, ptr);
 		else
 			ptr->cmd_arg = expand_tab(ptr->cmd_arg, ft_extract_words(&input[i], &i));
+		// ft_print_cat(i, &input[i], 0b01);
 		if (!ptr || ptr->error)
 			return (1);
 	}

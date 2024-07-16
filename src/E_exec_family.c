@@ -71,7 +71,6 @@ int	ft_exec_bigbro(t_data *data)
 int	ft_big_brother(t_data *data, t_pipeline *pipeline)
 {
 	pid_t	pid;
-	int		rtrn;
 	t_cmd	*cmd;
 
 	cmd = pipeline->cmd;
