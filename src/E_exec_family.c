@@ -53,7 +53,6 @@ int	ft_exec_bigbro(t_data *data)
 	cmd = data->cmd;
 	if (!data->cmd)
 		return (perror(ERR3"empty args struct"), 1);
-	data->exit_code = 0;
 	while (cmd)
 	{
 		if (!cmd->and_or || (cmd->and_or == '&' && !rtrn) || (cmd->and_or == '|' && rtrn))
