@@ -63,7 +63,7 @@ int	cmd_echo(t_data *data, t_cmd *cmd)
 		cmd->cmd_arg[i] = join(cmd->cmd_arg[i], "$\n", 0b10, 0);
 	}
 	if (cmd->cmd_arg[b])
-		put("%#-.1t", &cmd->cmd_arg[b]);
+		put("%#.1t\n", &cmd->cmd_arg[b]);
 	end(data, 0);
 	return (0);
 }
@@ -84,7 +84,7 @@ int	cmd_help(t_data *data, t_cmd *cmd)
 
 int	cmd_miaou(t_data *data, t_cmd *cmd)
 {
-	(void)data;
+	ft_print_cat(data->exit_code, "hiiiiii", 0b10);
 	(void)cmd;
 	return (0);
 }
