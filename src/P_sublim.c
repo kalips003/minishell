@@ -6,7 +6,7 @@
 /*   By: kalipso <kalipso@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/11 16:26:09 by kalipso           #+#    #+#             */
-/*   Updated: 2024/07/16 07:39:00 by kalipso          ###   ########.fr       */
+/*   Updated: 2024/07/16 07:42:25 by kalipso          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,31 +112,3 @@ static char	*sublim_dollar(t_data *data, char *raw_arg)
 	free_s(raw_arg);
 	return (rtrn);
 }
-
-// static char	*sublim_helper2(t_data *data, char *string)
-// {
-// 	int		i;
-// 	int		lenght;
-// 	char	*name;
-// 	char	*value;
-// 	char	*string2;
-
-// 	i = -1;
-// 	while (string[++i])
-// 	{
-// 		if (string[i] == '$' && string[i + 1] && wii(string[i + 1], "$ \n\t\"\n") < 0)
-// 		// ft_replace_var(string, &string[i + 1])
-// 		{
-// 			name = str("%1.*s", len_m(&string[i + 1], "$ \n\t\"\n"), &string[i + 1]);
-// 			lenght = len(name);
-// 			value = getenv(name);
-// 			name = free_s(name);
-// 			string2 = str("%1.*s%*s%1s", i, string, !!(value) , value, &string[i + 1 +lenght]);
-// 			free_s(string);
-// 			string = string2;
-// 		}
-// 	}
-// 	return (string);
-// 	// if ($$)
-// 	// 	get_process_pid
-// }
