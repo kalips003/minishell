@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   P_extract_w.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kalipso <kalipso@student.42.fr>            +#+  +:+       +#+        */
+/*   By: agallon <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/11 08:28:22 by kalipso           #+#    #+#             */
-/*   Updated: 2024/07/16 15:57:38 by kalipso          ###   ########.fr       */
+/*   Updated: 2024/07/16 19:05:56 by agallon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,8 @@ char	*ft_extract_word(char *raw_line, int *i)
 	if (raw_line[0] == '\'' || raw_line[0] == '"')
 		return (ft_extract_quotes(raw_line, i, raw_line[0]));
 	len = len_m(raw_line, " \n\t|&<>\"\'");
-	// put("raw_line =(%s)", raw_line);
-	// put("len = %d", len);
+	// put("raw_line =(%s)\n", raw_line);
+	// put("len = %d\n", len);
 	*i += len;
 	return (str("%1.*s", len, raw_line));
 }
@@ -82,31 +82,31 @@ char	*ft_extract_words(char *raw_line, int *i)
 		> "text
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * **/
 char	*ft_extract_quotes(char *raw_line, int *i, char quote)
-// {
-// 	char	*rtrn;
-// 	char	*rtrn2;
-// 	int		size;
-// 	int		size1;
-// 	int		i_bidon;
+{
+	char	*rtrn;
+	char	*rtrn2;
+	int		size;
+	int		size1;
+	int		i_bidon;
 
-// 	size = wii(quote, &raw_line[1]);
-// 	size1 = len_m2(&raw_line[1], quote) + 2 - (size == -1);
-// 	if (size1 == 2)
-// 		return (++(*i), ++(*i), NULL);
-// 	rtrn = str("%1.*s", size1, raw_line);
-// 	// put("(ft_extract_quotes) quote part =(%s)\n", rtrn);
-// 	if (size == -1)
-// 	{
-// 		(*i) += len(raw_line);
-// 		rtrn2 = readline(C_234"finish you quotes: "RESET);
-// 		rtrn = join(rtrn, rtrn2, 0b11, 0);
-// 		rtrn2 = ft_extract_quotes(rtrn, &i_bidon, quote);
-// 		free_s(rtrn);
-// 		return (rtrn2);
-// 	}
-// 	(*i) += size1;
-// 	return (rtrn);
-// }
+	size = wii(quote, &raw_line[1]);
+	size1 = len_m2(&raw_line[1], quote) + 2 - (size == -1);
+	if (size1 == 2)
+		return (++(*i), ++(*i), NULL);
+	rtrn = str("%1.*s", size1, raw_line);
+	// put("(ft_extract_quotes) quote part =(%s)\n", rtrn);
+	if (size == -1)
+	{
+		(*i) += len(raw_line);
+		rtrn2 = readline(C_234"finish you quotes: "RESET);
+		rtrn = join(rtrn, rtrn2, 0b11, 0);
+		rtrn2 = ft_extract_quotes(rtrn, &i_bidon, quote);
+		free_s(rtrn);
+		return (rtrn2);
+	}
+	(*i) += size1;
+	return (rtrn);
+}
 // {
 // 	char	*rtrn;
 // 	char	*rtrn2;
@@ -132,30 +132,30 @@ char	*ft_extract_quotes(char *raw_line, int *i, char quote)
 // 	(*i) += size;
 // 	return (rtrn);
 // }
-{
-	char	*rtrn;
-	char	*rtrn2;
-	int		size;
-	int		i_bidon;
+// {
+// 	char	*rtrn;
+// 	char	*rtrn2;
+// 	int		size;
+// 	int		i_bidon;
 
-	size = len_m2(&raw_line[1], quote) + 2;
-	// size = wii(quote, &raw_line[1]);
-	(*i) += size;
-	if (size == 2)
-		return (NULL);
-	rtrn = str("%1.*s", size, raw_line);
-	if (rtrn[size - 1] != quote)
-	{
-		rtrn2 = readline(C_305"finish you quotes: "RESET);
-		rtrn2 = join(rtrn2, "\n", 0b10, 0);
-		rtrn = join(rtrn, rtrn2, 0b11, 0);
-		rtrn2 = ft_extract_quotes(rtrn, &i_bidon, quote);
-		free_s(rtrn);
-		(*i)--;
-		return (rtrn2);
-	}
-	return (rtrn);
-}
+// 	size = len_m2(&raw_line[1], quote) + 2;
+// 	// size = wii(quote, &raw_line[1]);
+// 	(*i) += size;
+// 	if (size == 2)
+// 		return (NULL);
+// 	rtrn = str("%1.*s", size, raw_line);
+// 	if (rtrn[size - 1] != quote)
+// 	{
+// 		rtrn2 = readline(C_305"finish you quotes: "RESET);
+// 		rtrn2 = join(rtrn2, "\n", 0b10, 0);
+// 		rtrn = join(rtrn, rtrn2, 0b11, 0);
+// 		rtrn2 = ft_extract_quotes(rtrn, &i_bidon, quote);
+// 		free_s(rtrn);
+// 		(*i)--;
+// 		return (rtrn2);
+// 	}
+// 	return (rtrn);
+// }
 
 //  return lenght, stops when the char c is found
 static int	len_m2(char *s, char c)

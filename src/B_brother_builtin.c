@@ -50,13 +50,14 @@ int	cmd_cd(t_data *data, t_cmd *cmd)
 	char	*new_pwd;
 	char	*new_oldpwd;
 	char	buf_newpath[BUF_WD];
-	
+
 	if (!cmd->cmd_arg[1])
 		cmd->cmd_arg = expand_tab(cmd->cmd_arg, str("%1s", rtrn_var(data->env, "HOME=") + 5));
 
 	if (chdir(cmd->cmd_arg[1]))
 		return (perror(ERR9"cd bad dirrrecctory?:"), 1);
 	ft_memset(buf_newpath, 0, BUF_WD);
+	getcwd(buf_newpath, BUF_WD);
 	if (!*buf_newpath)
 		return (perror(ERR9"getcwd"), 1);
 	new_pwd = str("PWD=%1s", buf_newpath);
@@ -81,7 +82,7 @@ int	cmd_export(t_data *data, t_cmd *cmd)
 	// if (!cmd->cmd_arg[1])
 	// 	return (put("%t", data->env), (void)0);
 	// 	// cmd->cmd_arg = expand_tab(cmd->cmd_arg, str("%1s", rtrn_var(data->env, "HOME=") + 5));
-	
+
 
 
 	// new_pwd = str("PWD=%1s", buf_newpath);
