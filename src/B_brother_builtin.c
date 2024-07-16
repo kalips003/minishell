@@ -69,12 +69,12 @@ int	cmd_cd(t_data *data, t_cmd *cmd)
 int	cmd_export(t_data *data, t_cmd *cmd)
 {
 	char	*first_arg = cmd->cmd_arg[1];
-	put(C_123"first_arg=%s\n", first_arg);
+	// put(C_123"first_arg=%s\n", first_arg);
 	if (!cmd->cmd_arg[1] || wii('=', first_arg) <= 0)
 		return (put(ERR0"bad assignement\n"), 1);
 
 	char	*var = str("%1.*s", len_m(first_arg, "=") + 1, first_arg);
-	put(C_403"var=%s\n", var);
+	// put(C_403"var=%s\n", var);
 	// char	*value = str("%1s", &first_arg[l]);
 	replace_var(data, var, str("%1s", first_arg));
 	free_s(var);
