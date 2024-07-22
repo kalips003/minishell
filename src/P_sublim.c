@@ -6,7 +6,7 @@
 /*   By: kalipso <kalipso@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/11 16:26:09 by kalipso           #+#    #+#             */
-/*   Updated: 2024/07/16 13:54:00 by kalipso          ###   ########.fr       */
+/*   Updated: 2024/07/22 21:34:36 by kalipso          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,7 @@ static char	*sublim_dollar(t_data *data, char *raw_arg)
 			{
 				var = str("%1.*s=", b, &raw_arg[j + 1]);
 				j += b + 1;
-				rtrn = join(rtrn, &rtrn_var(data->env, var)[b + 1], 0b10, 0);
+				rtrn = join(rtrn, rtrn_var_v2(data->env, var), 0b10, 0);
 				free_s(var);
 			}
 		}

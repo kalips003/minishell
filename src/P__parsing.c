@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   P__parsing.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: agallon <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: kalipso <kalipso@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/11 08:28:22 by kalipso           #+#    #+#             */
-/*   Updated: 2024/07/16 17:56:56 by agallon          ###   ########.fr       */
+/*   Updated: 2024/07/22 21:31:07 by kalipso          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@ int				ft_parsing(t_data *data, char *input);
 static t_cmd	*ft_mario(t_data *data, char *raw_line, int *i, t_cmd *cmd);
 static void		ft_extract_redirection(char *raw_line, int *i, t_cmd *cmd);
 char			*rtrn_var(char **env, char *to_extract);
+char			*rtrn_var_v2(char **env, char *to_extract);
 
 ///////////////////////////////////////////////////////////////////////////////]
 /*******************************************************************************
@@ -116,6 +117,7 @@ static void	ft_extract_redirection(char *raw_line, int *i, t_cmd *cmd)
 
 ///////////////////////////////////////////////////////////////////////////////]
 // to_extract = "PATH="
+// return = "PATH=..............."
 char	*rtrn_var(char **env, char *to_extract)
 {
 	if (!env || !to_extract)
@@ -124,6 +126,22 @@ char	*rtrn_var(char **env, char *to_extract)
 	{
 		if (*env[0] == to_extract[0] && !find_str(*env, to_extract))
 			return (*env);
+		env++;
+	}
+	return (NULL);
+}
+
+
+// to_extract = "PATH="
+// return = PATH= > "..............."
+char	*rtrn_var_v2(char **env, char *to_extract)
+{
+	if (!env || !to_extract)
+		return (NULL);
+	while (*env)
+	{
+		if (*env[0] == to_extract[0] && !find_str(*env, to_extract))
+			return (&(*env)[len(to_extract)]);
 		env++;
 	}
 	return (NULL);

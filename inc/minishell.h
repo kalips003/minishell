@@ -6,7 +6,7 @@
 /*   By: kalipso <kalipso@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/11 16:55:43 by marvin            #+#    #+#             */
-/*   Updated: 2024/07/16 06:32:51 by kalipso          ###   ########.fr       */
+/*   Updated: 2024/07/22 21:29:34 by kalipso          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,6 +104,7 @@ int		ft_minishell(t_data *data);
 ********************************/
 int			ft_parsing(t_data *data, char *input);
 char		*rtrn_var(char **env, char *to_extract);
+char	*rtrn_var_v2(char **env, char *to_extract);
 // 
 char		*ft_extract_word(char *raw_line, int *i);
 char		*ft_extract_words(char *raw_line, int *i);
