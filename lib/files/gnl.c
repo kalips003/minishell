@@ -12,6 +12,57 @@
 
 #include "../../inc/libft.h"
 
+int		rtrn_size(t_gnl *first_list, int fd, char (*g_temp)[BUFFER_SIZE]);
+t_gnl	*ini_node(t_gnl *first_list, char (*g_temp)[BUFFER_SIZE], int fd);
+char	*f_rtrn_1(t_gnl *first_list, int fd, char (*g_temp)[BUFFER_SIZE]);
+void	f_copy_rest(t_gnl *last_list, char (*g_temp)[BUFFER_SIZE], int fd);
+char	*gnl(int fd);
+
+///////////////////////////////////////////////////////
+///////////////////////////////////////////////////////
+///////////////////////////////////////////////////////
+char	*gnl(int fd)
+{
+	t_gnl		*first_list;
+	t_gnl		*current_list;
+	char		*rtrn;
+	static char	g_temp[1024][BUFFER_SIZE];
+
+	if (fd < 0 || BUFFER_SIZE <= 0 || fd > 1023)
+		return (NULL);
+	first_list = ini_node(NULL, g_temp, fd);
+	if (!first_list)
+		return (NULL);
+	rtrn = f_rtrn_1(first_list, fd, g_temp);
+	if (rtrn == NULL)
+	{
+		free_all(&first_list);
+		return (NULL);
+	}
+	current_list = first_list;
+	while (current_list->next != NULL)
+		current_list = current_list->next;
+	f_copy_rest(current_list, g_temp, fd);
+	free_all(&first_list);
+	return (rtrn);
+}
+
+///////////////////////////////////////////////////////
+char	*f_rtrn_1(t_gnl *first_list, int fd, char (*g_temp)[BUFFER_SIZE])
+{
+	int		size;
+	char	*rtrn;
+
+	size = rtrn_size(first_list, fd, g_temp);
+	if (size <= 0)
+		return (NULL);
+	rtrn = (char *)malloc(size + 1);
+	if (!rtrn)
+		return (NULL);
+	rtrn = f_rtrn_2(first_list, rtrn, size);
+	return (rtrn);
+}
+
 ///////////////////////////////////////////////////////
 // #	RETURN FULL SIZE + CREATE ALL LIST
 int	rtrn_size(t_gnl *first_list, int fd, char (*g_temp)[BUFFER_SIZE])
@@ -66,21 +117,6 @@ t_gnl	*ini_node(t_gnl *first_list, char (*g_temp)[BUFFER_SIZE], int fd)
 	return (next_list);
 }
 
-///////////////////////////////////////////////////////
-char	*f_rtrn_1(t_gnl *first_list, int fd, char (*g_temp)[BUFFER_SIZE])
-{
-	int		size;
-	char	*rtrn;
-
-	size = rtrn_size(first_list, fd, g_temp);
-	if (size <= 0)
-		return (NULL);
-	rtrn = (char *)malloc(size + 1);
-	if (!rtrn)
-		return (NULL);
-	rtrn = f_rtrn_2(first_list, rtrn, size);
-	return (rtrn);
-}
 
 ///////////////////////////////////////////////////////
 // #	RESET TEMP = COPY THE REMAINDER TO TEMP
@@ -108,33 +144,4 @@ void	f_copy_rest(t_gnl *last_list, char (*g_temp)[BUFFER_SIZE], int fd)
 			i++;
 		}
 	}
-}
-
-///////////////////////////////////////////////////////
-///////////////////////////////////////////////////////
-///////////////////////////////////////////////////////
-char	*gnl(int fd)
-{
-	t_gnl		*first_list;
-	t_gnl		*current_list;
-	char		*rtrn;
-	static char	g_temp[1024][BUFFER_SIZE];
-
-	if (fd < 0 || BUFFER_SIZE <= 0 || fd > 1023)
-		return (NULL);
-	first_list = ini_node(NULL, g_temp, fd);
-	if (!first_list)
-		return (NULL);
-	rtrn = f_rtrn_1(first_list, fd, g_temp);
-	if (rtrn == NULL)
-	{
-		free_all(&first_list);
-		return (NULL);
-	}
-	current_list = first_list;
-	while (current_list->next != NULL)
-		current_list = current_list->next;
-	f_copy_rest(current_list, g_temp, fd);
-	free_all(&first_list);
-	return (rtrn);
 }
