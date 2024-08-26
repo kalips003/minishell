@@ -26,68 +26,69 @@ NAMEE = minishell
 NAMEE_BONUS = minishell_b
 
 
-a: $(NAMEE)
+a: $(NAMEE) small_clean
 	@rm -rf out && mkdir out
-	@$(call random_shmol_cat, teshting ... $@: $(ARG), 'hav fun ね? ($(word 1, $^))', $(CLS), );
-	./$(word 1, $^)
-
-ARG_SET_1 = echo hello > txt | cat
-ARG_SET_2 = grep "error" < log.txt | sort | uniq > errors.txt 2> errors.log
-ARG_SET_3 = cmd1 < infile | cmd2 > outfile | cmd3 >> appendfile
-ARG_SET_3 = cmd1 < $FILE | cmd2 "> outfile" | cmd3 && cmd3 >> appendfile
-ARG_SET_4 = export a="hello world!" && echo "abc"'--$5--'"==$ $$==$?==$a    "PWD is $PWD
-ARG_SET_4 = echo '"a"'"a"'
-
-ARG_SET_4 = echo asdlkjfss  > adsdnfbsadjff >> aaaaaaaaaaaa << END | echo a || echo b
-ARG_SET_5 = echo a | wc -c | <<END cat > out/out3 && cat out/out3 && echo all done
-
-b: $(NAMEE)
-	@$(call random_shmol_cat, teshting ... $@: $(ARG), 'hav fun ね? ($(word 1, $^))', $(CLS), );
+	@$(call random_shmol_cat, teshting ... $@: minishell, 'hav fun ね? ($(word 1, $^))', $(CLS), );
 	./$(word 1, $^)
 
 
-v: $(NAMEE)
+b: $(NAMEE) small_clean
+	@mkdir out
+	gnome-terminal -- bash --posix &
+	@$(call random_shmol_cat, teshting ... $@: minishell, 'hav fun ね? ($(word 1, $^))', $(CLS), );
+	./$(word 1, $^)
+
+t:
+	gnome-terminal -- bash --posix &
+
+v: $(NAMEE) small_clean
+	@if [ ! -e out ]; then \
+		mkdir -p out; \
+	fi;
 	@$(call random_shmol_cat, "vlgrininnng ... $(word 1, $^)!", "$(ARG2)", $(CLS), );
-	-$(VALGRIND) ./$(word 1, $^)
+	-$(VALGRIND) ./$(word 1, $^) 2> out/valgrind
+
+BAD_ARG='echo a'
+
+w: $(NAMEE) small_clean
+	@if [ ! -e out ]; then \
+		mkdir -p out; \
+	fi;
+	@$(call random_shmol_cat, "vlgrininnng ... $(word 1, $^)!", "$(ARG2)", $(CLS), );
+	$(VALGRIND) bash -c './minishell <<< $(BAD_ARG)'
 
 
+m: $(NAMEE) small_clean
+	@while IFS= read -r line; do \
+		if [ -z "$$line" ]; then break; fi; \
+		$(call random_shmol_cat, "teshiing ... $(word 1, $^)!", "$$line", $(CLS), ); \
+		echo "$(C_1R_4G_1B) \tBASH:$(RESET)"; \
+		bash --posix -c "$$line" < /dev/tty; \
+		echo "$(C_4R_1G_1B) \tMINISHELL:$(RESET)"; \
+		$(VALGRIND) ./$(word 1, $^) -c "$$line" < /dev/tty 2> out/valgrind; \
+		echo "\t$(C_1R_4G_1B)~ Press Enter to continue...$(RESET)"; read -p "" key < /dev/tty; \
+	done < data/TESTS
 
-# MAKE M: Run life threatening arguments (no valgrind, make things fucked up)
-#
-m: $(NAMEE)
-	-@$(call helper_tester, $(ARG_SET_1), "\'teshting the limits of the food chain:", shouldnt work, $(HELLGRIND))
-	@$(call random_shmol_cat, \033[5m(DISCLAIMER)\033[25m, No philosophers was harmed in the making of this test, $(CLS), )
+maieul: $(NAMEE) small_clean
+	@$(call random_shmol_cat, "teshiing ... $(word 1, $^)!", "lets find tis fd", $(CLS), )
+	@if [ ! -e traces ]; then \
+		mkdir -p traces; \
+	fi; \
+	strace -e dup2,dup,openat,clone,read,write,access,close,execve,pipe,pipe2 -tt -ff -o traces/trace \
+	./minishell -c "echo a"; \
+	strace-log-merge traces/trace | batcat -lstrace;
 
-
-# MAKE N: Run a dozen bad arguments, with valgrind
-#
-n: $(NAMEE)
-	@for arg in $(BAD_ARGS); do \
-	$(call random_shmol_cat, teshting lots of bad args:, $$arg, $(CLS), ); \
-	$(HELLGRIND) ./$(word 1, $^) $$arg; \
-	echo "\t\033[5m~ Press Enter to continue...\033[0m"; read -p "" key; \
-	done
-	@$(call random_shmol_cat, this one is for valgriind output only:, valgrind doesnt like philosophers、some will die, $(CLS), )
-	$(VALGRIIND) ./$(word 1, $^) 3 500 100 200 2
-
-BAD_ARGS = "3 5 1 1 2a" \
-			"3 5 1 wtf"
-
+small_clean:
+	@rm -rf ./out traces
+	@if [ ! -e out ]; then \
+		mkdir -p out; \
+	fi;
 
 ULIMIT = 3000
-m2: $(NAME)
+m2: $(NAMEE)
 	@$(call random_shmol_cat, "\'trying to make shit crash", "try n break it.. にゃ?", $(CLS), );
 	@(ulimit -s $(ULIMIT); ./$(word 1, $^) $(ARG))
 	ulimit -s 8192
-
-# $(1)=$(ARGS) $(2)=$(TXT_cat) $(3)=$(TXT_below) $(4)=$(VALGRIND)(timeout 15s)
-define helper_tester
-	$(call random_shmol_cat, $(2), $(1), $(CLS), )
-	echo "\n\t$(3)\n"
-	read -p "" key;
-	$(4) ./$(word 1, $^) $(1)
-	echo "\n\t\033[5m~ Press Enter to continue...\033[0m"; read -p "" key;
-endef
 
 
 # ╭──────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
@@ -171,7 +172,7 @@ bonus: $(OBJ_B) main_bonus.c inc/$(NAME).h
 		$(call print_cat, "", $(RED), $(GOLD), $(RED_L), $(call pad_word, 10, "ERROR"), $(call pad_word, 12, "COMPILING..")); \
 		exit 1; \
 	fi
-	$(call print_cat, $(CLEAR), $(GOLD), $(GREEN1), $(COLOR_4R_1G_5B), $(call pad_word, 10, $(NAME_BONUS)), $(call pad_word, 12, "Compiled~"));
+	$(call print_cat, $(CLEAR), $(GOLD), $(GREEN1), $(C_4R_1G_5B), $(call pad_word, 10, $(NAME_BONUS)), $(call pad_word, 12, "Compiled~"));
 
 srcb/obj/%.o: srcb/%.c inc/$(NAME).h
 	@clear
@@ -202,7 +203,7 @@ srcb/obj/%.o: srcb/%.c inc/$(NAME).h
 # VALGRIND = valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes -s --track-fds=yes
 VALGRIND = valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes -s --trace-children=yes --track-fds=yes $(V_FLAG)
 VALGRIND_OTHER = valgrind --vgdb=yes
-V_FLAG = --suppressions="ignore_valgrind"
+V_FLAG = --suppressions="data/ignore_valgrind"
 HELLGRIND = valgrind --tool=helgrind ?-g3?
 
 # ↑さ↓ぎょう  を  ↓ほ↑ぞん
@@ -228,6 +229,7 @@ norm: fclean
 # 																				TEST
 test:	libft
 	@rm -f ./lib/a.out
+	@clear
 	-@cc ./lib/test.c ./lib/libft.a -o ./lib/a.out $(ADD_FLAGS)
 	@if [ ! -e ./lib/a.out ]; then\
 		$(call print_cat, "", $(RED), $(GOLD), $(RED_L), $(call pad_word, 10, "The⠀Cake"), $(call pad_word, 12, "Is⠀A⠀Lie..")); \
@@ -236,33 +238,50 @@ test:	libft
 	@$(call random_cat, $(call pad_word, 12, "Making"), $(call pad_word, 14, "Science"), $(CLS), $(RESET));
 	@lib/a.out
 
-FLAGS_TEST = -g -fPIE -I$(HEADER_FOLDER)
-
-test2:	libft $(OBJ) inc/$(NAME).h
-	@rm -f ./lib/a.out
-	@$(CC) $(FLAGS_TEST) $(OBJ) ./lib/test.c lib/libft.a $(ADD_FLAGS) -o ./lib/a.out
-	@$(call random_cat, $(call pad_word, 12, "TESTING"), $(call pad_word, 14, "SCIENCE"), $(CLS), $(RESET));
-	-@$(VALGRIND) lib/a.out
-
 vtest:	libft
 	@rm -f ./lib/a.out
+	@clear
+	-@cc ./lib/test.c ./lib/libft.a -o ./lib/a.out $(ADD_FLAGS)
+	@if [ ! -e ./lib/a.out ]; then\
+		$(call print_cat, "", $(RED), $(GOLD), $(RED_L), $(call pad_word, 10, "The⠀Cake"), $(call pad_word, 12, "Is⠀A⠀Lie..")); \
+		exit 3; \
+	fi
+	@$(call random_cat, $(call pad_word, 12, "Making"), $(call pad_word, 14, "Science"), $(CLS), $(RESET));
+	-@$(VALGRIND) lib/a.out
+
+FLAGS_TEST = -g -fPIE -I$(HEADER_FOLDER)
+
+t2:	libft $(OBJ) inc/$(NAME).h
+	@rm -f ./lib/a.out
+	@clear
+	@$(CC) $(FLAGS_TEST) $(OBJ) ./lib/test.c lib/libft.a $(ADD_FLAGS) -o ./lib/a.out
+	@$(call random_cat, $(call pad_word, 12, "TESTING"), $(call pad_word, 14, "SCIENCE"), $(CLS), $(RESET));
+	@ lib/a.out
+
+vt2:	libft $(OBJ) inc/$(NAME).h
+	@rm -f ./lib/a.out
+	@clear
 	@$(CC) $(FLAGS_TEST) $(OBJ) ./lib/test.c lib/libft.a $(ADD_FLAGS) -o ./lib/a.out
 	@$(call print_cat, "", $(RED), $(GOLD), $(BLUE1), $(call pad_word, 10, "TESTING"), $(call pad_word, 12, "SCIENCE.."));
 	-@$(VALGRIND) lib/a.out
+
 # --------------------------------------------------------------------------------- >
 # 																				CLEAN
-clean:
+clean: small_clean
 	@rm -rf $(OBJ_FOLDER) ./out
-	@$(call print_cat, $(CLEAR), $(COLOR_2R_2G_5B), $(COLOR_3R_2G_0B), $(COLOR_4R_5G_0B), $(call pad_word, 10, "Objects"), $(call pad_word, 12, "Exterminated"));
+	@$(call print_cat, $(CLEAR), $(C_2R_2G_5B), $(C_3R_2G_0B), $(C_4R_5G_0B), $(call pad_word, 10, "Objects"), $(call pad_word, 12, "Exterminated"));
 
 fclean: clean
 	@rm -rf $(NAME) $(NAME_BONUS)
 	@make -sC lib clean_silent;
-	@$(call print_cat, $(CLEAR), $(COLOR_1R_2G_0B), $(COLOR_3R_0G_0B), $(COLOR_2R_1G_0B), $(call pad_word, 10, "All⠀clean"), $(call pad_word, 12, "Miaster"));
+	@$(call print_cat, $(CLEAR), $(C_1R_2G_0B), $(C_3R_0G_0B), $(C_2R_1G_0B), $(call pad_word, 10, "All⠀clean"), $(call pad_word, 12, "Miaster"));
 
-re: fclean all bonus
+re: fclean all
 
-.PHONY: all clean fclean re bonus
+
+# <?> .PHONY: test - This declares that test is a phony target,
+# 	meaning it's not associated with a file. </?>
+.PHONY: all clean fclean small_clean re bonus
 
 .SILENT: $(NAME) bonus
 
@@ -286,16 +305,16 @@ re: fclean all bonus
 # │─██████─────────██████──██████████─██████████─██████──────────██████─────██████─────│
 # ╰────────────────────────────────────────────────────────────────────────────────────╯
 
-# COLOR_2R_1G_3B
+# C_2R_1G_3B
 PURPLE = \033[38;5;97m
-# COLOR_4R_3G_0B
+# C_4R_3G_0B
 GOLD = \033[38;5;178m
-# COLOR_0R_4G_0B
+# C_0R_4G_0B
 GREEN1 = \033[38;5;40m
-# COLOR_0R_4G_5B
+# C_0R_4G_5B
 BLUE1 = \033[38;5;45m
 
-# $(COLOR_1R_0G_5B), $(COLOR_5R_1G_0B), $(COLOR_0R_2G_5B)
+# $(C_1R_0G_5B), $(C_5R_1G_0B), $(C_0R_2G_5B)
 # $(RED), $(GOLD), $(BLUE1)
 
 test_color666:
@@ -442,219 +461,219 @@ MAGENTA_L = \033[38;5;13m
 CYAN_L = \033[38;5;14m
 WHITE = \033[38;5;15m
 
-COLOR_0R_0G_0B = \033[38;5;16m
-COLOR_0R_0G_1B = \033[38;5;17m
-COLOR_0R_0G_2B = \033[38;5;18m
-COLOR_0R_0G_3B = \033[38;5;19m
-COLOR_0R_0G_4B = \033[38;5;20m
-COLOR_0R_0G_5B = \033[38;5;21m
-COLOR_0R_1G_0B = \033[38;5;22m
-COLOR_0R_1G_1B = \033[38;5;23m
-COLOR_0R_1G_2B = \033[38;5;24m
-COLOR_0R_1G_3B = \033[38;5;25m
-COLOR_0R_1G_4B = \033[38;5;26m
-COLOR_0R_1G_5B = \033[38;5;27m
-COLOR_0R_2G_0B = \033[38;5;28m
-COLOR_0R_2G_1B = \033[38;5;29m
-COLOR_0R_2G_2B = \033[38;5;30m
-COLOR_0R_2G_3B = \033[38;5;31m
-COLOR_0R_2G_4B = \033[38;5;32m
-COLOR_0R_2G_5B = \033[38;5;33m
-COLOR_0R_3G_0B = \033[38;5;34m
-COLOR_0R_3G_1B = \033[38;5;35m
-COLOR_0R_3G_2B = \033[38;5;36m
-COLOR_0R_3G_3B = \033[38;5;37m
-COLOR_0R_3G_4B = \033[38;5;38m
-COLOR_0R_3G_5B = \033[38;5;39m
-COLOR_0R_4G_0B = \033[38;5;40m
-COLOR_0R_4G_1B = \033[38;5;41m
-COLOR_0R_4G_2B = \033[38;5;42m
-COLOR_0R_4G_3B = \033[38;5;43m
-COLOR_0R_4G_4B = \033[38;5;44m
-COLOR_0R_4G_5B = \033[38;5;45m
-COLOR_0R_5G_0B = \033[38;5;46m
-COLOR_0R_5G_1B = \033[38;5;47m
-COLOR_0R_5G_2B = \033[38;5;48m
-COLOR_0R_5G_3B = \033[38;5;49m
-COLOR_0R_5G_4B = \033[38;5;50m
-COLOR_0R_5G_5B = \033[38;5;51m
-COLOR_1R_0G_0B = \033[38;5;52m
-COLOR_1R_0G_1B = \033[38;5;53m
-COLOR_1R_0G_2B = \033[38;5;54m
-COLOR_1R_0G_3B = \033[38;5;55m
-COLOR_1R_0G_4B = \033[38;5;56m
-COLOR_1R_0G_5B = \033[38;5;57m
-COLOR_1R_1G_0B = \033[38;5;58m
-COLOR_1R_1G_1B = \033[38;5;59m
-COLOR_1R_1G_2B = \033[38;5;60m
-COLOR_1R_1G_3B = \033[38;5;61m
-COLOR_1R_1G_4B = \033[38;5;62m
-COLOR_1R_1G_5B = \033[38;5;63m
-COLOR_1R_2G_0B = \033[38;5;64m
-COLOR_1R_2G_1B = \033[38;5;65m
-COLOR_1R_2G_2B = \033[38;5;66m
-COLOR_1R_2G_3B = \033[38;5;67m
-COLOR_1R_2G_4B = \033[38;5;68m
-COLOR_1R_2G_5B = \033[38;5;69m
-COLOR_1R_3G_0B = \033[38;5;70m
-COLOR_1R_3G_1B = \033[38;5;71m
-COLOR_1R_3G_2B = \033[38;5;72m
-COLOR_1R_3G_3B = \033[38;5;73m
-COLOR_1R_3G_4B = \033[38;5;74m
-COLOR_1R_3G_5B = \033[38;5;75m
-COLOR_1R_4G_0B = \033[38;5;76m
-COLOR_1R_4G_1B = \033[38;5;77m
-COLOR_1R_4G_2B = \033[38;5;78m
-COLOR_1R_4G_3B = \033[38;5;79m
-COLOR_1R_4G_4B = \033[38;5;80m
-COLOR_1R_4G_5B = \033[38;5;81m
-COLOR_1R_5G_0B = \033[38;5;82m
-COLOR_1R_5G_1B = \033[38;5;83m
-COLOR_1R_5G_2B = \033[38;5;84m
-COLOR_1R_5G_3B = \033[38;5;85m
-COLOR_1R_5G_4B = \033[38;5;86m
-COLOR_1R_5G_5B = \033[38;5;87m
-COLOR_2R_0G_0B = \033[38;5;88m
-COLOR_2R_0G_1B = \033[38;5;89m
-COLOR_2R_0G_2B = \033[38;5;90m
-COLOR_2R_0G_3B = \033[38;5;91m
-COLOR_2R_0G_4B = \033[38;5;92m
-COLOR_2R_0G_5B = \033[38;5;93m
-COLOR_2R_1G_0B = \033[38;5;94m
-COLOR_2R_1G_1B = \033[38;5;95m
-COLOR_2R_1G_2B = \033[38;5;96m
-COLOR_2R_1G_3B = \033[38;5;97m
-COLOR_2R_1G_4B = \033[38;5;98m
-COLOR_2R_1G_5B = \033[38;5;99m
-COLOR_2R_2G_0B = \033[38;5;100m
-COLOR_2R_2G_1B = \033[38;5;101m
-COLOR_2R_2G_2B = \033[38;5;102m
-COLOR_2R_2G_3B = \033[38;5;103m
-COLOR_2R_2G_4B = \033[38;5;104m
-COLOR_2R_2G_5B = \033[38;5;105m
-COLOR_2R_3G_0B = \033[38;5;106m
-COLOR_2R_3G_1B = \033[38;5;107m
-COLOR_2R_3G_2B = \033[38;5;108m
-COLOR_2R_3G_3B = \033[38;5;109m
-COLOR_2R_3G_4B = \033[38;5;110m
-COLOR_2R_3G_5B = \033[38;5;111m
-COLOR_2R_4G_0B = \033[38;5;112m
-COLOR_2R_4G_1B = \033[38;5;113m
-COLOR_2R_4G_2B = \033[38;5;114m
-COLOR_2R_4G_3B = \033[38;5;115m
-COLOR_2R_4G_4B = \033[38;5;116m
-COLOR_2R_4G_5B = \033[38;5;117m
-COLOR_2R_5G_0B = \033[38;5;118m
-COLOR_2R_5G_1B = \033[38;5;119m
-COLOR_2R_5G_2B = \033[38;5;120m
-COLOR_2R_5G_3B = \033[38;5;121m
-COLOR_2R_5G_4B = \033[38;5;122m
-COLOR_2R_5G_5B = \033[38;5;123m
-COLOR_3R_0G_0B = \033[38;5;124m
-COLOR_3R_0G_1B = \033[38;5;125m
-COLOR_3R_0G_2B = \033[38;5;126m
-COLOR_3R_0G_3B = \033[38;5;127m
-COLOR_3R_0G_4B = \033[38;5;128m
-COLOR_3R_0G_5B = \033[38;5;129m
-COLOR_3R_1G_0B = \033[38;5;130m
-COLOR_3R_1G_1B = \033[38;5;131m
-COLOR_3R_1G_2B = \033[38;5;132m
-COLOR_3R_1G_3B = \033[38;5;133m
-COLOR_3R_1G_4B = \033[38;5;134m
-COLOR_3R_1G_5B = \033[38;5;135m
-COLOR_3R_2G_0B = \033[38;5;136m
-COLOR_3R_2G_1B = \033[38;5;137m
-COLOR_3R_2G_2B = \033[38;5;138m
-COLOR_3R_2G_3B = \033[38;5;139m
-COLOR_3R_2G_4B = \033[38;5;140m
-COLOR_3R_2G_5B = \033[38;5;141m
-COLOR_3R_3G_0B = \033[38;5;142m
-COLOR_3R_3G_1B = \033[38;5;143m
-COLOR_3R_3G_2B = \033[38;5;144m
-COLOR_3R_3G_3B = \033[38;5;145m
-COLOR_3R_3G_4B = \033[38;5;146m
-COLOR_3R_3G_5B = \033[38;5;147m
-COLOR_3R_4G_0B = \033[38;5;148m
-COLOR_3R_4G_1B = \033[38;5;149m
-COLOR_3R_4G_2B = \033[38;5;150m
-COLOR_3R_4G_3B = \033[38;5;151m
-COLOR_3R_4G_4B = \033[38;5;152m
-COLOR_3R_4G_5B = \033[38;5;153m
-COLOR_3R_5G_0B = \033[38;5;154m
-COLOR_3R_5G_1B = \033[38;5;155m
-COLOR_3R_5G_2B = \033[38;5;156m
-COLOR_3R_5G_3B = \033[38;5;157m
-COLOR_3R_5G_4B = \033[38;5;158m
-COLOR_3R_5G_5B = \033[38;5;159m
-COLOR_4R_0G_0B = \033[38;5;160m
-COLOR_4R_0G_1B = \033[38;5;161m
-COLOR_4R_0G_2B = \033[38;5;162m
-COLOR_4R_0G_3B = \033[38;5;163m
-COLOR_4R_0G_4B = \033[38;5;164m
-COLOR_4R_0G_5B = \033[38;5;165m
-COLOR_4R_1G_0B = \033[38;5;166m
-COLOR_4R_1G_1B = \033[38;5;167m
-COLOR_4R_1G_2B = \033[38;5;168m
-COLOR_4R_1G_3B = \033[38;5;169m
-COLOR_4R_1G_4B = \033[38;5;170m
-COLOR_4R_1G_5B = \033[38;5;171m
-COLOR_4R_2G_0B = \033[38;5;172m
-COLOR_4R_2G_1B = \033[38;5;173m
-COLOR_4R_2G_2B = \033[38;5;174m
-COLOR_4R_2G_3B = \033[38;5;175m
-COLOR_4R_2G_4B = \033[38;5;176m
-COLOR_4R_2G_5B = \033[38;5;177m
-COLOR_4R_3G_0B = \033[38;5;178m
-COLOR_4R_3G_1B = \033[38;5;179m
-COLOR_4R_3G_2B = \033[38;5;180m
-COLOR_4R_3G_3B = \033[38;5;181m
-COLOR_4R_3G_4B = \033[38;5;182m
-COLOR_4R_3G_5B = \033[38;5;183m
-COLOR_4R_4G_0B = \033[38;5;184m
-COLOR_4R_4G_1B = \033[38;5;185m
-COLOR_4R_4G_2B = \033[38;5;186m
-COLOR_4R_4G_3B = \033[38;5;187m
-COLOR_4R_4G_4B = \033[38;5;188m
-COLOR_4R_4G_5B = \033[38;5;189m
-COLOR_4R_5G_0B = \033[38;5;190m
-COLOR_4R_5G_1B = \033[38;5;191m
-COLOR_4R_5G_2B = \033[38;5;192m
-COLOR_4R_5G_3B = \033[38;5;193m
-COLOR_4R_5G_4B = \033[38;5;194m
-COLOR_4R_5G_5B = \033[38;5;195m
-COLOR_5R_0G_0B = \033[38;5;196m
-COLOR_5R_0G_1B = \033[38;5;197m
-COLOR_5R_0G_2B = \033[38;5;198m
-COLOR_5R_0G_3B = \033[38;5;199m
-COLOR_5R_0G_4B = \033[38;5;200m
-COLOR_5R_0G_5B = \033[38;5;201m
-COLOR_5R_1G_0B = \033[38;5;202m
-COLOR_5R_1G_1B = \033[38;5;203m
-COLOR_5R_1G_2B = \033[38;5;204m
-COLOR_5R_1G_3B = \033[38;5;205m
-COLOR_5R_1G_4B = \033[38;5;206m
-COLOR_5R_1G_5B = \033[38;5;207m
-COLOR_5R_2G_0B = \033[38;5;208m
-COLOR_5R_2G_1B = \033[38;5;209m
-COLOR_5R_2G_2B = \033[38;5;210m
-COLOR_5R_2G_3B = \033[38;5;211m
-COLOR_5R_2G_4B = \033[38;5;212m
-COLOR_5R_2G_5B = \033[38;5;213m
-COLOR_5R_3G_0B = \033[38;5;214m
-COLOR_5R_3G_1B = \033[38;5;215m
-COLOR_5R_3G_2B = \033[38;5;216m
-COLOR_5R_3G_3B = \033[38;5;217m
-COLOR_5R_3G_4B = \033[38;5;218m
-COLOR_5R_3G_5B = \033[38;5;219m
-COLOR_5R_4G_0B = \033[38;5;220m
-COLOR_5R_4G_1B = \033[38;5;221m
-COLOR_5R_4G_2B = \033[38;5;222m
-COLOR_5R_4G_3B = \033[38;5;223m
-COLOR_5R_4G_4B = \033[38;5;224m
-COLOR_5R_4G_5B = \033[38;5;225m
-COLOR_5R_5G_0B = \033[38;5;226m
-COLOR_5R_5G_1B = \033[38;5;227m
-COLOR_5R_5G_2B = \033[38;5;228m
-COLOR_5R_5G_3B = \033[38;5;229m
-COLOR_5R_5G_4B = \033[38;5;230m
-COLOR_5R_5G_5B = \033[38;5;231m
+C_0R_0G_0B = \033[38;5;16m
+C_0R_0G_1B = \033[38;5;17m
+C_0R_0G_2B = \033[38;5;18m
+C_0R_0G_3B = \033[38;5;19m
+C_0R_0G_4B = \033[38;5;20m
+C_0R_0G_5B = \033[38;5;21m
+C_0R_1G_0B = \033[38;5;22m
+C_0R_1G_1B = \033[38;5;23m
+C_0R_1G_2B = \033[38;5;24m
+C_0R_1G_3B = \033[38;5;25m
+C_0R_1G_4B = \033[38;5;26m
+C_0R_1G_5B = \033[38;5;27m
+C_0R_2G_0B = \033[38;5;28m
+C_0R_2G_1B = \033[38;5;29m
+C_0R_2G_2B = \033[38;5;30m
+C_0R_2G_3B = \033[38;5;31m
+C_0R_2G_4B = \033[38;5;32m
+C_0R_2G_5B = \033[38;5;33m
+C_0R_3G_0B = \033[38;5;34m
+C_0R_3G_1B = \033[38;5;35m
+C_0R_3G_2B = \033[38;5;36m
+C_0R_3G_3B = \033[38;5;37m
+C_0R_3G_4B = \033[38;5;38m
+C_0R_3G_5B = \033[38;5;39m
+C_0R_4G_0B = \033[38;5;40m
+C_0R_4G_1B = \033[38;5;41m
+C_0R_4G_2B = \033[38;5;42m
+C_0R_4G_3B = \033[38;5;43m
+C_0R_4G_4B = \033[38;5;44m
+C_0R_4G_5B = \033[38;5;45m
+C_0R_5G_0B = \033[38;5;46m
+C_0R_5G_1B = \033[38;5;47m
+C_0R_5G_2B = \033[38;5;48m
+C_0R_5G_3B = \033[38;5;49m
+C_0R_5G_4B = \033[38;5;50m
+C_0R_5G_5B = \033[38;5;51m
+C_1R_0G_0B = \033[38;5;52m
+C_1R_0G_1B = \033[38;5;53m
+C_1R_0G_2B = \033[38;5;54m
+C_1R_0G_3B = \033[38;5;55m
+C_1R_0G_4B = \033[38;5;56m
+C_1R_0G_5B = \033[38;5;57m
+C_1R_1G_0B = \033[38;5;58m
+C_1R_1G_1B = \033[38;5;59m
+C_1R_1G_2B = \033[38;5;60m
+C_1R_1G_3B = \033[38;5;61m
+C_1R_1G_4B = \033[38;5;62m
+C_1R_1G_5B = \033[38;5;63m
+C_1R_2G_0B = \033[38;5;64m
+C_1R_2G_1B = \033[38;5;65m
+C_1R_2G_2B = \033[38;5;66m
+C_1R_2G_3B = \033[38;5;67m
+C_1R_2G_4B = \033[38;5;68m
+C_1R_2G_5B = \033[38;5;69m
+C_1R_3G_0B = \033[38;5;70m
+C_1R_3G_1B = \033[38;5;71m
+C_1R_3G_2B = \033[38;5;72m
+C_1R_3G_3B = \033[38;5;73m
+C_1R_3G_4B = \033[38;5;74m
+C_1R_3G_5B = \033[38;5;75m
+C_1R_4G_0B = \033[38;5;76m
+C_1R_4G_1B = \033[38;5;77m
+C_1R_4G_2B = \033[38;5;78m
+C_1R_4G_3B = \033[38;5;79m
+C_1R_4G_4B = \033[38;5;80m
+C_1R_4G_5B = \033[38;5;81m
+C_1R_5G_0B = \033[38;5;82m
+C_1R_5G_1B = \033[38;5;83m
+C_1R_5G_2B = \033[38;5;84m
+C_1R_5G_3B = \033[38;5;85m
+C_1R_5G_4B = \033[38;5;86m
+C_1R_5G_5B = \033[38;5;87m
+C_2R_0G_0B = \033[38;5;88m
+C_2R_0G_1B = \033[38;5;89m
+C_2R_0G_2B = \033[38;5;90m
+C_2R_0G_3B = \033[38;5;91m
+C_2R_0G_4B = \033[38;5;92m
+C_2R_0G_5B = \033[38;5;93m
+C_2R_1G_0B = \033[38;5;94m
+C_2R_1G_1B = \033[38;5;95m
+C_2R_1G_2B = \033[38;5;96m
+C_2R_1G_3B = \033[38;5;97m
+C_2R_1G_4B = \033[38;5;98m
+C_2R_1G_5B = \033[38;5;99m
+C_2R_2G_0B = \033[38;5;100m
+C_2R_2G_1B = \033[38;5;101m
+C_2R_2G_2B = \033[38;5;102m
+C_2R_2G_3B = \033[38;5;103m
+C_2R_2G_4B = \033[38;5;104m
+C_2R_2G_5B = \033[38;5;105m
+C_2R_3G_0B = \033[38;5;106m
+C_2R_3G_1B = \033[38;5;107m
+C_2R_3G_2B = \033[38;5;108m
+C_2R_3G_3B = \033[38;5;109m
+C_2R_3G_4B = \033[38;5;110m
+C_2R_3G_5B = \033[38;5;111m
+C_2R_4G_0B = \033[38;5;112m
+C_2R_4G_1B = \033[38;5;113m
+C_2R_4G_2B = \033[38;5;114m
+C_2R_4G_3B = \033[38;5;115m
+C_2R_4G_4B = \033[38;5;116m
+C_2R_4G_5B = \033[38;5;117m
+C_2R_5G_0B = \033[38;5;118m
+C_2R_5G_1B = \033[38;5;119m
+C_2R_5G_2B = \033[38;5;120m
+C_2R_5G_3B = \033[38;5;121m
+C_2R_5G_4B = \033[38;5;122m
+C_2R_5G_5B = \033[38;5;123m
+C_3R_0G_0B = \033[38;5;124m
+C_3R_0G_1B = \033[38;5;125m
+C_3R_0G_2B = \033[38;5;126m
+C_3R_0G_3B = \033[38;5;127m
+C_3R_0G_4B = \033[38;5;128m
+C_3R_0G_5B = \033[38;5;129m
+C_3R_1G_0B = \033[38;5;130m
+C_3R_1G_1B = \033[38;5;131m
+C_3R_1G_2B = \033[38;5;132m
+C_3R_1G_3B = \033[38;5;133m
+C_3R_1G_4B = \033[38;5;134m
+C_3R_1G_5B = \033[38;5;135m
+C_3R_2G_0B = \033[38;5;136m
+C_3R_2G_1B = \033[38;5;137m
+C_3R_2G_2B = \033[38;5;138m
+C_3R_2G_3B = \033[38;5;139m
+C_3R_2G_4B = \033[38;5;140m
+C_3R_2G_5B = \033[38;5;141m
+C_3R_3G_0B = \033[38;5;142m
+C_3R_3G_1B = \033[38;5;143m
+C_3R_3G_2B = \033[38;5;144m
+C_3R_3G_3B = \033[38;5;145m
+C_3R_3G_4B = \033[38;5;146m
+C_3R_3G_5B = \033[38;5;147m
+C_3R_4G_0B = \033[38;5;148m
+C_3R_4G_1B = \033[38;5;149m
+C_3R_4G_2B = \033[38;5;150m
+C_3R_4G_3B = \033[38;5;151m
+C_3R_4G_4B = \033[38;5;152m
+C_3R_4G_5B = \033[38;5;153m
+C_3R_5G_0B = \033[38;5;154m
+C_3R_5G_1B = \033[38;5;155m
+C_3R_5G_2B = \033[38;5;156m
+C_3R_5G_3B = \033[38;5;157m
+C_3R_5G_4B = \033[38;5;158m
+C_3R_5G_5B = \033[38;5;159m
+C_4R_0G_0B = \033[38;5;160m
+C_4R_0G_1B = \033[38;5;161m
+C_4R_0G_2B = \033[38;5;162m
+C_4R_0G_3B = \033[38;5;163m
+C_4R_0G_4B = \033[38;5;164m
+C_4R_0G_5B = \033[38;5;165m
+C_4R_1G_0B = \033[38;5;166m
+C_4R_1G_1B = \033[38;5;167m
+C_4R_1G_2B = \033[38;5;168m
+C_4R_1G_3B = \033[38;5;169m
+C_4R_1G_4B = \033[38;5;170m
+C_4R_1G_5B = \033[38;5;171m
+C_4R_2G_0B = \033[38;5;172m
+C_4R_2G_1B = \033[38;5;173m
+C_4R_2G_2B = \033[38;5;174m
+C_4R_2G_3B = \033[38;5;175m
+C_4R_2G_4B = \033[38;5;176m
+C_4R_2G_5B = \033[38;5;177m
+C_4R_3G_0B = \033[38;5;178m
+C_4R_3G_1B = \033[38;5;179m
+C_4R_3G_2B = \033[38;5;180m
+C_4R_3G_3B = \033[38;5;181m
+C_4R_3G_4B = \033[38;5;182m
+C_4R_3G_5B = \033[38;5;183m
+C_4R_4G_0B = \033[38;5;184m
+C_4R_4G_1B = \033[38;5;185m
+C_4R_4G_2B = \033[38;5;186m
+C_4R_4G_3B = \033[38;5;187m
+C_4R_4G_4B = \033[38;5;188m
+C_4R_4G_5B = \033[38;5;189m
+C_4R_5G_0B = \033[38;5;190m
+C_4R_5G_1B = \033[38;5;191m
+C_4R_5G_2B = \033[38;5;192m
+C_4R_5G_3B = \033[38;5;193m
+C_4R_5G_4B = \033[38;5;194m
+C_4R_5G_5B = \033[38;5;195m
+C_5R_0G_0B = \033[38;5;196m
+C_5R_0G_1B = \033[38;5;197m
+C_5R_0G_2B = \033[38;5;198m
+C_5R_0G_3B = \033[38;5;199m
+C_5R_0G_4B = \033[38;5;200m
+C_5R_0G_5B = \033[38;5;201m
+C_5R_1G_0B = \033[38;5;202m
+C_5R_1G_1B = \033[38;5;203m
+C_5R_1G_2B = \033[38;5;204m
+C_5R_1G_3B = \033[38;5;205m
+C_5R_1G_4B = \033[38;5;206m
+C_5R_1G_5B = \033[38;5;207m
+C_5R_2G_0B = \033[38;5;208m
+C_5R_2G_1B = \033[38;5;209m
+C_5R_2G_2B = \033[38;5;210m
+C_5R_2G_3B = \033[38;5;211m
+C_5R_2G_4B = \033[38;5;212m
+C_5R_2G_5B = \033[38;5;213m
+C_5R_3G_0B = \033[38;5;214m
+C_5R_3G_1B = \033[38;5;215m
+C_5R_3G_2B = \033[38;5;216m
+C_5R_3G_3B = \033[38;5;217m
+C_5R_3G_4B = \033[38;5;218m
+C_5R_3G_5B = \033[38;5;219m
+C_5R_4G_0B = \033[38;5;220m
+C_5R_4G_1B = \033[38;5;221m
+C_5R_4G_2B = \033[38;5;222m
+C_5R_4G_3B = \033[38;5;223m
+C_5R_4G_4B = \033[38;5;224m
+C_5R_4G_5B = \033[38;5;225m
+C_5R_5G_0B = \033[38;5;226m
+C_5R_5G_1B = \033[38;5;227m
+C_5R_5G_2B = \033[38;5;228m
+C_5R_5G_3B = \033[38;5;229m
+C_5R_5G_4B = \033[38;5;230m
+C_5R_5G_5B = \033[38;5;231m

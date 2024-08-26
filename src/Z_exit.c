@@ -6,13 +6,14 @@
 /*   By: kalipso <kalipso@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/02 06:21:51 by kalipso           #+#    #+#             */
-/*   Updated: 2024/07/16 02:04:12 by kalipso          ###   ########.fr       */
+/*   Updated: 2024/08/26 17:48:52 by kalipso          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../inc/minishell.h"
 
 void	clear_cmd(t_data *data);
+static t_cmd	*h_clean_cmd(t_cmd *cmd);
 void	end(t_data *data, int exit_code);
 
 ///////////////////////////////////////////////////////////////////////////////]
@@ -21,7 +22,7 @@ void	clear_cmd(t_data *data)
 {
 	t_pipeline	*ptr1;
 	t_cmd	*ptr2;
-	t_cmd	*ptr_temp;
+	void	*ptr_temp;
 
 	if (!data->cmd)
 		return ;
@@ -30,21 +31,28 @@ void	clear_cmd(t_data *data)
 	{
 		ptr2 = ptr1->cmd;
 		while (ptr2)
-		{
-			free_tab(ptr2->cmd_arg);
-			free_s(ptr2->in_file);
-			free_s(ptr2->out_file);
-			if (ptr2->fd_in > 0)
-				close(ptr2->fd_in);//			flkg m;fglok;;f;dlkm?
-			if (ptr2->fd_out > 0)
-				close(ptr2->fd_out);
-			ptr_temp = ptr2->next;
-			free_s(ptr2);
-			ptr2 = ptr_temp;
-		}
-		ptr1 = ptr1->next;
+			ptr2 = h_clean_cmd(ptr2);
+		ptr_temp = ptr1->next;
+		ptr1 = free_s(ptr1);
+		ptr1 = (t_pipeline *)ptr_temp;
 	}
-	data->cmd = free_s(data->cmd);
+	data->cmd = NULL;
+}
+
+static t_cmd	*h_clean_cmd(t_cmd *cmd)
+{
+	t_cmd	*ptr_temp;
+
+	free_tab(cmd->cmd_arg);
+	free_s(cmd->in_file);
+	free_s(cmd->out_file);
+	if (cmd->fd_in > 0)
+		close(cmd->fd_in);//			flkg m;fglok;;f;dlkm?
+	if (cmd->fd_out > 0)
+		close(cmd->fd_out);
+	ptr_temp = cmd->next;
+	free_s(cmd);
+	return (ptr_temp);
 }
 
 ///////////////////////////////////////////////////////////////////////////////]

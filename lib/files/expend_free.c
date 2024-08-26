@@ -54,8 +54,7 @@ char	**expand_tab(char **tab, char *new_line)
 	}
 	new_tab[i] = new_line;
 	new_tab[i + 1] = NULL;
-	if (tab)
-		free(tab);
+	free_s(tab);
 	return (new_tab);
 }
 

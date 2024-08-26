@@ -6,7 +6,7 @@
 /*   By: kalipso <kalipso@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/11 16:55:43 by marvin            #+#    #+#             */
-/*   Updated: 2024/07/22 21:29:34 by kalipso          ###   ########.fr       */
+/*   Updated: 2024/08/26 23:19:09 by kalipso          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,12 +22,28 @@
 # include <sys/ioctl.h>
 #include <readline/readline.h>
 #include <readline/history.h>
-
+#include <signal.h>
+#include <time.h>
+#include <sys/types.h>
 
 # include "libft.h"
 
 
 
+// // Define the global array
+// t_built_pair g_builtin_g[] = {
+//     {"cd", cmd_cd},
+//     {"export", cmd_export},
+//     {"unset", cmd_unset},
+//     {"alias", cmd_alias},
+// };
+
+// t_built_pair g_builtin[] = {
+//     {"echo", cmd_echo},
+//     {"type", cmd_type},
+//     {"help", cmd_help},
+//     {"miaou", cmd_miaou},
+// };
 
 
 ///////////////////////////////////////////////////////////////////////////////]
@@ -40,7 +56,7 @@
 
 # define STDIN 0
 # define STDOUT 1
-# define STDERR 1
+# define STDERR 2
 
 typedef struct s_data	t_data;
 typedef struct s_pip	t_pip;
@@ -51,19 +67,26 @@ typedef int (*t_builtin)(t_data *data, t_cmd *cmd);
 
 typedef struct s_built_pair
 {
-	char		*cmd_name;
+	char	*cmd_name;
 	t_builtin	cmd_exe;
 }	t_built_pair;
+
+typedef struct s_saved_pid
+{
+	pid_t	pid;
+}	t_saved_pid;
 
 typedef struct s_data
 {
 	char	**env;
 	char	**history;
 	int		fd_in_original;
-	t_built_pair builtin_g[5];
+	t_built_pair builtin_g[6];
 	t_built_pair builtin[5];
 	t_pipeline	*cmd;
 	int		exit_code;
+	struct sigaction	sig_int;
+	struct sigaction	sig_quit;
 }	t_data;
 
 typedef struct s_cmd
@@ -71,6 +94,7 @@ typedef struct s_cmd
 // 0 = nothing, 1 = <>, 2 = <<>>
 	char	**cmd_arg;
 
+	pid_t	pid;
 	char	*in_file;
 	char	*out_file;
 
@@ -91,6 +115,8 @@ typedef struct s_cmd2
 	struct s_cmd2	*next;
 
 	char	and_or;
+
+	// int	*pids
 	// int		error;
 }	t_pipeline;
 
@@ -98,18 +124,22 @@ typedef struct s_cmd2
 /********************************
 		A
 ********************************/
-int		ft_minishell(t_data *data);
+
+int	brother_builtin_v2(t_data *data, t_cmd *cmd);
+int	child_builtin_v2(t_data *data, t_cmd *cmd);
+void	ft_exec_v2(t_data *data, t_cmd *cmd, char **env);
+int	ft_big_brother_v2(t_data *data, t_pipeline *pipeline);
+int	ft_child_v2(t_data *data, t_cmd *cmd);
 /********************************
 		P - PARSING
 ********************************/
 int			ft_parsing(t_data *data, char *input);
-char		*rtrn_var(char **env, char *to_extract);
 char	*rtrn_var_v2(char **env, char *to_extract);
-// 
+//
 char		*ft_extract_word(char *raw_line, int *i);
 char		*ft_extract_words(char *raw_line, int *i);
 char		*ft_extract_quotes(char *raw_line, int *i, char quote);
-// 
+//
 void		sublim_child(t_data *data, t_cmd *cmd);
 char		*ft_sublim(t_data *data, char *string);
 t_cmd		*new_node(t_cmd *previous);
@@ -117,10 +147,12 @@ t_pipeline	*new_cmd(t_pipeline *previous, char c);
 /********************************
 		E - EXEC
 ********************************/
+int		ft_minishell(t_data *data);
 void	ft_exec(t_data *data, t_cmd *cmd);
 void	h_734_redirection(t_data *data, t_cmd *cmd);
 void	ft_heredoc(t_data *data, t_cmd *cmd);
-// 
+char	*find_cmd(char *command, char **env);
+//
 int		ft_minishell(t_data *data);
 int		ft_exec_bigbro(t_data *data);
 int		ft_big_brother(t_data *data, t_pipeline *cmd);
@@ -133,13 +165,17 @@ int		cmd_cd(t_data *data, t_cmd *cmd);
 int		cmd_export(t_data *data, t_cmd *cmd);
 int		cmd_unset(t_data *data, t_cmd *cmd);
 int		cmd_alias(t_data *data, t_cmd *cmd);
-// 
+int		cmd_exit(t_data *data, t_cmd *cmd);
+//
 void	child_builtin(t_data *data, t_cmd *cmd);
 int		cmd_echo(t_data *data, t_cmd *cmd);
 int		cmd_type(t_data *data, t_cmd *cmd);
 int		cmd_help(t_data *data, t_cmd *cmd);
 int		cmd_miaou(t_data *data, t_cmd *cmd);
-// 
+int		cmd_env(t_data *data, t_cmd *cmd);
+int		cmd_history(t_data *data, t_cmd *cmd);
+int		cmd_pwd(t_data *data, t_cmd *cmd);
+//
 void	replace_var(t_data *data, char *to_replace, char *replacement);
 char	**pop_entry(char **env, char *to_pop);
 /********************************
@@ -160,8 +196,32 @@ int		initialization(int ac, char **av, char **env, t_data *data);
 void	clear_cmd(t_data *data);
 void	end(t_data *data, int exit_code);
 
+
 #define INPUT_TXT "\033[0;31mm\033[0;32mi\033[0;33ma\033[0;34mo\033[0;35mu\e[0m > "
 #define MSG_REDI "syntax error near unexpected token '%c'\n"
 
+
+///////////////////////////////////////////////////////////////////////////////]
+//
+// 							█░█ █░░ █▄█ █▀ █▀ █▀▀
+// 							█▄█ █▄▄ ░█░ ▄█ ▄█ ██▄
+//
+///////////////////////////////////////////////////////////////////////////////]
+
+int		ft_parsing_v2(t_data *data, char *input);
+t_cmd	*ft_mario_v2(t_data *data, char *raw_line, int *i, t_cmd *cmd);
+void	ft_extract_redirection_v2(char *raw_line, int *i, t_cmd *cmd);
+
+char		*ft_extract_words_v2(char *raw_line, int *i);
+char		*ft_extract_quotes_v2(char *raw_line, int *i, char quote);
+
+void	sublim_pipe_v2(t_data *data, t_pipeline *pipe);
+char	*ft_dollar_v2(t_data *data, char *raw_dollar, int *i);
+char	*sublim_dollar_v2(t_data *data, char *raw_arg, int bit);
+char	*ft_sublim_v2(t_data *data, char *string, int bit);
+
+int	ft_builtin_v2(t_data *data, t_cmd *cmd);
+void	ft_exec_v2(t_data *data, t_cmd *cmd, char **env);
+int	ft_big_brother_v2(t_data *data, t_pipeline *pipeline);
 
 #endif
