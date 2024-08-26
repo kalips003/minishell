@@ -10,40 +10,40 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../inc/minishell.h"
 
-void		ft_exec(t_data *data, t_cmd *cmd);
+// void		ft_exec(t_data *data, t_cmd *cmd);
 void		h_734_redirection(t_data *data, t_cmd *cmd);
 void		ft_heredoc(t_data *data, t_cmd *cmd);
-static char	*find_cmd(char *command, char **env);
+char		*find_cmd(char *command, char **env);
 static char	*find_parsing(char *command, char **env);
 
 ///////////////////////////////////////////////////////////////////////////////]
 /*******************************************************************************
 	takes a cmd link, redirect to correct fd, execute it, end the child
 ******************************************************************************/
-void	ft_exec(t_data *data, t_cmd *cmd)
-{
-	char	*cmd_exe;
+// void	ft_exec(t_data *data, t_cmd *cmd)
+// {
+// 	char	*cmd_exe;
 
-	if (!cmd)
-		end(data, 0);
-	sublim_child(data, cmd);
-	h_734_redirection(data, cmd);
-	child_builtin(data, cmd);
-	cmd_exe = find_cmd(cmd->cmd_arg[0], data->env);
-	if (!cmd_exe)
-	{
-		print_fd(2, ERR6"%s: not found\n", cmd->cmd_arg[0]);
-		end(data, 127);
-	}
-	if (execve(cmd_exe, cmd->cmd_arg, data->env) == -1)
-	{
-		perror(ERR7"error execve");
-		free_s(cmd_exe);
-		end(data, 1);
-	}
-}
+// 	if (!cmd)
+// 		end(data, 0);
+// 	// sublim_child(data, cmd);
+// 	h_734_redirection(data, cmd);
+// 	child_builtin(data, cmd);
+// 	cmd_exe = find_cmd(cmd->cmd_arg[0], data->env);
+// 	if (!cmd_exe)
+// 	{
+// 		print_fd(2, ERR6"%s: not found\n", cmd->cmd_arg[0]);
+// 		end(data, 127);
+// 	}
+// 	if (execve(cmd_exe, cmd->cmd_arg, data->env) == -1)
+// 	{
+// 		perror(ERR7"error execve");
+// 		free_s(cmd_exe);
+// 		end(data, 1);
+// 	}
+// }
 
 ///////////////////////////////////////////////////////////////////////////////]
 void	h_734_redirection(t_data *data, t_cmd *cmd)
@@ -92,7 +92,7 @@ void	ft_heredoc(t_data *data, t_cmd *cmd)
 		data->fd_in_original = -1;
 		while (1)
 		{
-			tmp = readline(C_415"heredoc:"RESET);
+			tmp = readline(/* C_415 */"heredoc:"/* RESET */);
 			if (!tmp || same_str(tmp, cmd->in_file))
 				(close(fd[1]), free_s(tmp), end(data, 0));
 			print_fd(fd[1], "%s\n", tmp);
@@ -101,6 +101,7 @@ void	ft_heredoc(t_data *data, t_cmd *cmd)
 	}
 	else
 	{
+		close(data->fd_in_original);
 		close(fd[1]);
 		dup_close(fd[0], STDIN);
 		waitpid(pid, NULL, 0);
@@ -111,7 +112,9 @@ void	ft_heredoc(t_data *data, t_cmd *cmd)
 
 
 ///////////////////////////////////////////////////////////////////////////////]
-static char	*find_cmd(char *command, char **env)
+// return full path of command > /path/to/command
+// 		./command/path > ./command/path
+char	*find_cmd(char *command, char **env)
 {
 	char	*rtrn;
 
@@ -136,7 +139,7 @@ static char	*find_parsing(char *command, char **env)
 	char	*cmd;
 	int		i;
 
-	paths = split(&rtrn_var(env, "PATH=")[5], ":");
+	paths = split(rtrn_var_v2(env, "PATH="), ":");
 	if (!paths)
 		return (put(RED"ERROR--->$PATH:\n%t\n"RESET, env), NULL);
 	cmd = NULL;

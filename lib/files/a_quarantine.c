@@ -12,6 +12,8 @@
 
 #include "../../inc/libft.h"
 
+int	len_c(char *s, char c);
+
 //////////////////////////////////////////////////////////// (%S)
 //	%<size>S return ptr to copied memory
 char	*pt_memcpy(char *str)
@@ -31,4 +33,17 @@ char	*pt_memcpy(char *str)
 int	**pt_numtab(char *num_tab)
 {
 	return ((int **)num_tab);
+}
+
+//  return lenght, stops when the char c is found
+int	len_c(char *s, char c)
+{
+	int		i;
+
+	i = 0;
+	if (!s)
+		return (-1);
+	while (s[i] && s[i] != c)
+		i++;
+	return (i);
 }

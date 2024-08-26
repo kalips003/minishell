@@ -6,7 +6,7 @@
 /*   By: kalipso <kalipso@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/06 16:06:22 by agallon           #+#    #+#             */
-/*   Updated: 2024/07/16 07:25:55 by kalipso          ###   ########.fr       */
+/*   Updated: 2024/08/26 16:09:01 by kalipso          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -150,7 +150,7 @@ int	ft_print_cat(int num, char *string2, int bit)
 	put("\033[38;5;%dm\
 	\tにゃ~\033[38;5;%dm\t⠀╱|、\n\
 	\t\t(˚ˎ。7⠀⠀⠀\033[38;5;%dm~ %d ~\033[38;5;%dm\n\
-	\t\t⠀|、˜\\\t\t\t\033[38;5;%dm~ %s\033[38;5;%dm\n\
+	\t\t⠀|、˜\\\t\t\t\033[38;5;%dm~%s~\033[38;5;%dm\n\
 	\t\t⠀じしˍ)ノ\n", \
 	color2, color1, color2, num, color1, color2, string2, color1);
 	if ((bit >> 0) & 1)

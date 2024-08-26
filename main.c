@@ -6,11 +6,11 @@
 /*   By: kalipso <kalipso@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/14 16:12:38 by kalipso           #+#    #+#             */
-/*   Updated: 2024/07/16 13:41:41 by kalipso          ###   ########.fr       */
+/*   Updated: 2024/08/26 23:33:24 by kalipso          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "./inc/minishell.h"
 
 /*******************************************************************************
 ******************************************************************************/
@@ -46,12 +46,57 @@ WIFSIGNALED(status): Returns true if the child process was terminated by a signa
 WTERMSIG(status): Returns the signal number that caused the child to terminate. This should only be used if WIFSIGNALED(status) is true.
 
 
-BAD TEST
-	echo -nnd salut
-	E'C'HO
-	echo a | grep a
+WIFEXITED(status):
+    This macro checks if the child process terminated normally (i.e., by calling exit() or returning from main).
+    Returns a non-zero value (true) if the child terminated normally.
+WEXITSTATUS(status):
+    This macro retrieves the exit status of the child if WIFEXITED(status) is true.
+    It extracts the low-order 8 bits (i.e., the least significant byte) of the status, which is the actual exit code passed by the child process using exit() or returned from main.
+WIFSIGNALED(status):
+    This macro checks if the child process terminated due to a signal (i.e., if it was killed by a signal).
+    Returns a non-zero value if the child process was terminated by a signal.
+WTERMSIG(status):
+    If WIFSIGNALED(status) is true, this macro retrieves the signal number that caused the child process to terminate.
+WIFSTOPPED(status):
+    This macro checks if the child process is currently stopped (not terminated) because it received a signal that stopped it.
+    Returns a non-zero value if the child process is stopped.
+WSTOPSIG(status):
+    If WIFSTOPPED(status) is true, this macro retrieves the signal number that caused the child process to stop.
+WIFCONTINUED(status):
+    This macro checks if the child process was resumed after being stopped (only relevant in certain systems).
+    Returns a non-zero value if the child process has been resumed by SIGCONT.
 
-	< !!! >		ccmd that start or end with && ||
+
+
+| < > & $ ` " ' \ ; * ? [ ] { } ( ) ! # << >> <<< \001 \002
+
+/: Directory separator.
+": Encloses a string with variable expansion.
+': Encloses a literal string with no expansion.
+\\: Escapes the following character.
+;: Separates commands.
+*: Wildcard for matching multiple characters.
+?: Wildcard for matching a single character.
+[ ]: Used in pattern matching and file tests.
+{ }: Brace expansion.
+`: Command substitution (deprecated in favor of $()).
+$(): Modern command substitution.
+!: History expansion.
+#: Comment.
+>: Redirect output (overwrite).
+>>: Redirect output (append).
+<: Redirect input.
+&: Background process.
+&&: Conditional execution (if successful).
+||: Conditional execution (if failed).
+(): Group commands.
+|&: Pipe both stdout and stderr.
+<<: Here document.
+<<<: Here string.
+
+
+STOCKER TOUT LES PID QQ PART, PROBABLEMEBT DAND LA GLOBALE
+LES REUTILISER POUR SIGkill
 ******************************************************************************/
 ///////////////////////////////////////////////////////////////////////////////]
 int	main(int ac, char **av, char **env)
@@ -71,239 +116,40 @@ int	main(int ac, char **av, char **env)
 }
 
 
-/*******************************************************************************
-unistd.h Functions
-
-    int isatty(int fd);
-        Purpose: Checks if a file descriptor refers to a terminal.
-        Usage: Useful for determining if the input/output is from/to a terminal or another source, such as a file or pipe.
-        Example: Check if stdin is a terminal.
-
-        c
-
-    if (isatty(STDIN_FILENO)) {
-        printf("Standard input is a terminal.\n");
-    } else {
-        printf("Standard input is not a terminal.\n");
-    }
-
-char *ttyname(int fd);
-
-    Purpose: Returns a string with the file name of the terminal connected to the file descriptor.
-    Usage: Identify the terminal associated with a file descriptor.
-    Example:
-
-    c
-
-    char *term_name = ttyname(STDIN_FILENO);
-    if (term_name) {
-        printf("Terminal name: %s\n", term_name);
-    } else {
-        perror("ttyname");
-    }
-
-int ttyslot(void);
-
-    Purpose: Returns the index of the control terminal for the current process.
-    Usage: To get the slot number for the terminal, useful for managing terminal sessions.
-    Example:
-
-    c
-
-        int slot = ttyslot();
-        printf("Terminal slot: %d\n", slot);
-
-sys/ioctl.h Functions
-
-    int ioctl(int fd, unsigned long request, ...);
-        Purpose: General-purpose control for I/O devices, often used to control terminal settings.
-        Usage: Modify terminal properties like window size, non-blocking mode, etc.
-        Example: Setting the terminal to non-blocking mode.
-
-        c
-
-        int flags = fcntl(STDIN_FILENO, F_GETFL, 0);
-        fcntl(STDIN_FILENO, F_SETFL, flags | O_NONBLOCK);
-
-termios.h Functions
-
-    int tcsetattr(int fd, int optional_actions, const struct termios *termios_p);
-        Purpose: Sets the parameters associated with the terminal.
-        Usage: Change terminal attributes, such as disabling canonical mode and echo.
-        Example:
-
-        c
-
-    struct termios term;
-    tcgetattr(STDIN_FILENO, &term);
-    term.c_lflag &= ~(ICANON | ECHO);
-    tcsetattr(STDIN_FILENO, TCSANOW, &term);
-
-int tcgetattr(int fd, struct termios *termios_p);
-
-    Purpose: Gets the parameters associated with the terminal.
-    Usage: Retrieve current terminal settings.
-    Example:
-
-    c
-
-        struct termios term;
-        if (tcgetattr(STDIN_FILENO, &term) == -1) {
-            perror("tcgetattr");
-        }
-
-termcap.h Functions
-
-    int tgetent(char *bp, const char *name);
-        Purpose: Loads the terminal entry for the terminal type.
-        Usage: Initialize the termcap library.
-        Example:
-
-        c
-
-    char term_buffer[2048];
-    if (tgetent(term_buffer, getenv("TERM")) != 1) {
-        fprintf(stderr, "Could not access the termcap data base.\n");
-    }
-
-int tgetflag(char id[2]);
-
-    Purpose: Gets the boolean value of a capability.
-    Usage: Determine terminal capabilities.
-    Example:
-
-    c
-
-    if (tgetflag("bs")) {
-        printf("Terminal supports backspace.\n");
-    }
-
-int tgetnum(char id[2]);
-
-    Purpose: Gets the numeric value of a capability.
-    Usage: Retrieve numeric capabilities like the number of columns.
-    Example:
-
-    c
-
-    int columns = tgetnum("co");
-    printf("Number of columns: %d\n", columns);
-
-char *tgetstr(char id[2], char **area);
-
-    Purpose: Gets the string value of a capability.
-    Usage: Retrieve string capabilities like the clear screen sequence.
-    Example:
-
-    c
-
-    char *clear_screen = tgetstr("cl", NULL);
-    tputs(clear_screen, 1, putchar);
-
-char *tgoto(const char *cap, int col, int row);
-
-    Purpose: Returns a cursor motion string for the given column and row.
-    Usage: Move the cursor to a specified position.
-    Example:
-
-    c
-
-    char *move_cursor = tgoto(tgetstr("cm", NULL), 10, 5);
-    tputs(move_cursor, 1, putchar);
-
-int tputs(const char *str, int affcnt, int (*putc)(int));
-
-    Purpose: Puts the string on the terminal.
-    Usage: Output a terminal control string.
-    Example:
-
-    c
-
-tputs(clear_screen, 1, putchar);
-
-
-
-
-
-
-
-
-
-
-
-
- * 		EXETERNAL FUNCTIONS
-
-
-// readline library
-// Management: Commands like history, !number, and !! can interact with the history
-char *readline(const char *prompt);
-void rl_clear_history(void);
-int rl_on_new_line(void);
-	> after handling signals or asynchronous events that affect the terminal
-int rl_replace_line(const char *text, int clear_undo);
-	> auto-completion
-int rl_redisplay(void);
-	> Redraws the prompt and input line.
-int add_history(const char *string);
-
-// unistd.h
-int access(const char *pathname, int mode);
-
-// sys/wait.h
-pid_t wait(int *wstatus);
-pid_t waitpid(pid_t pid, int *wstatus, int options);
-pid_t wait3(int *wstatus, int options, struct rusage *rusage);
-pid_t wait4(pid_t pid, int *wstatus, int options, struct rusage *rusage);
-
-// signal.h
-typedef void (*sighandler_t)(int);
-sighandler_t signal(int signum, sighandler_t handler);
-int sigaction(int signum, const struct sigaction *act, struct sigaction *oldact);
-int sigemptyset(sigset_t *set);
-int sigaddset(sigset_t *set, int signum);
-int kill(pid_t pid, int sig);
-
-// unistd.h
-char *getcwd(char *buf, size_t size);
-int chdir(const char *path);
-
-// sys/stat.h
-int stat(const char *pathname, struct stat *statbuf);
-int lstat(const char *pathname, struct stat *statbuf);
-int fstat(int fd, struct stat *statbuf);
-
-// unistd.h
-int unlink(const char *pathname);
-int dup(int oldfd);
-
-// dirent.h
-DIR *opendir(const char *name);
-struct dirent *readdir(DIR *dirp);
-int closedir(DIR *dirp);
-
-// unistd.h
-int isatty(int fd);
-
-// unistd.h
-char *ttyname(int fd);
-int ttyslot(void);
-
-// sys/ioctl.h
-int ioctl(int fd, unsigned long request, ...);
-
-// stdlib.h
-char *getenv(const char *name);
-
-// termios.h
-int tcsetattr(int fd, int optional_actions, const struct termios *termios_p);
-int tcgetattr(int fd, struct termios *termios_p);
-
-// termcap.h
-int tgetent(char *bp, const char *name);
-int tgetflag(char id[2]);
-int tgetnum(char id[2]);
-char *tgetstr(char id[2], char **area);
-char *tgoto(const char *cap, int col, int row);
-int tputs(const char *str, int affcnt, int (*putc)(int));
-******************************************************************************/
+// 				SIGNALS
+/*
+
+		0	???
+SIGHUP	1	Hangup detected on controlling terminal or death of controlling process	N/A
+SIGINT	2	Interrupt from keyboard	Ctrl + C
+SIGQUIT	3	Quit from keyboard	Ctrl + \
+SIGILL	4	Illegal Instruction	N/A
+SIGTRAP	5	Trace/breakpoint trap	N/A
+SIGABRT	6	Abort signal from abort	N/A
+SIGBUS	7	Bus error (bad memory access)	N/A
+SIGFPE	8	Floating-point exception	N/A
+SIGKILL	9	Kill signal (cannot be caught or ignored)	N/A
+SIGUSR1	10	User-defined signal 1	N/A
+SIGSEGV	11	Segmentation fault	N/A
+SIGUSR2	12	User-defined signal 2	N/A
+SIGPIPE	13	Broken pipe: write to pipe with no readers	N/A
+SIGALRM	14	Timer signal from alarm	N/A
+SIGTERM	15	Termination signal	N/A
+SIGSTKFLT	16	Stack fault on coprocessor	N/A
+SIGCHLD	17	Child stopped or terminated	N/A
+SIGCONT	18	Continue if stopped	N/A
+SIGSTOP	19	Stop process	N/A
+SIGTSTP	20	Stop typed at terminal	Ctrl + Z
+SIGTTIN	21	Terminal input for background process	N/A
+SIGTTOU	22	Terminal output for background process	N/A
+SIGURG	23	Urgent condition on socket	N/A
+SIGXCPU	24	CPU time limit exceeded	N/A
+SIGXFSZ	25	File size limit exceeded	N/A
+SIGVTALRM	26	Virtual alarm clock	N/A
+SIGPROF	27	Profiling timer expired	N/A
+SIGWINCH	28	Window resize signal	N/A
+SIGIO	29	I/O now possible	N/A
+SIGPWR	30	Power failure	N/A
+SIGSYS	31	Bad system call	N/A
+
+*/

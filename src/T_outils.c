@@ -6,16 +6,16 @@
 /*   By: kalipso <kalipso@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/15 17:11:46 by kalipso           #+#    #+#             */
-/*   Updated: 2024/07/16 04:11:20 by kalipso          ###   ########.fr       */
+/*   Updated: 2024/08/26 19:13:52 by kalipso          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../inc/minishell.h"
 
 void		dup_close(int fd_replace, int fd_erase);
-//
 t_cmd		*new_node(t_cmd *previous);
 t_pipeline	*new_cmd(t_pipeline *previous, char c);
+char		*rtrn_var_v2(char **env, char *to_extract);
 
 ///////////////////////////////////////////////////////////////////////////////]
 // duplicate fd_replace onto > fd_erase
@@ -64,4 +64,19 @@ t_pipeline	*new_cmd(t_pipeline *previous, char c)
 	if (!next->cmd)
 		return (put(ERRM"error (4)"), NULL);
 	return (next);
+}
+
+// to_extract = "PATH="
+// return = PATH= > "..............."
+char	*rtrn_var_v2(char **env, char *to_extract)
+{
+	if (!env || !to_extract)
+		return (NULL);
+	while (*env)
+	{
+		if (*env[0] == to_extract[0] && !find_str(*env, to_extract))
+			return (&(*env)[len(to_extract)]);
+		env++;
+	}
+	return (NULL);
 }

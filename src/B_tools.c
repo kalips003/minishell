@@ -6,11 +6,11 @@
 /*   By: kalipso <kalipso@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/11 08:28:22 by kalipso           #+#    #+#             */
-/*   Updated: 2024/07/16 07:38:00 by kalipso          ###   ########.fr       */
+/*   Updated: 2024/08/26 19:30:17 by kalipso          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../inc/minishell.h"
 
 
 void	replace_var(t_data *data, char *to_replace, char *replacement);
@@ -23,7 +23,7 @@ void	replace_var(t_data *data, char *var, char *replacement)
 {
 	if (!replacement || !data->env)
 		return ;
-	if (!rtrn_var(data->env, var) && replacement)
+	if (!rtrn_var_v2(data->env, var) && replacement)
 		data->env = expand_tab(data->env, replacement);
 	else
 	{
@@ -55,3 +55,4 @@ char	**pop_entry(char **env, char *to_pop)
 	free_s(env);
 	return (new_tab);
 }
+
