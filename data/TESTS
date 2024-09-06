@@ -1,6 +1,4 @@
 echo a | sleep 3 | echo b
-
-
 export ABC='$helo' && echo $ABC && unset ABC &&  echo :$ABC
 export ABC="HELLO" && echo $ABC && unset ABC &&  echo :$ABC
 export ABC="$helo" && echo $ABC && unset ABC &&  echo :$ABC
@@ -11,13 +9,15 @@ echo a && echo b
 echo "its workinggggg"
 export ABC="hello wold" && echo $ABC
 
+echo asdlkjfss  > out/adsdnfbsadjff >> out/aaaaaaaaaaaa << END | echo a || echo b
+export a="hello world!" && echo "abc"'--$5--'"==$ $$==$?==$a    "PWD is $PWD
+
+
 
 
 echo hello > txt | cat
 grep "error" < log.txt | sort | uniq > errors.txt 2> errors.log
 cmd1 < infile | cmd2 > outfile | cmd3 >> appendfile
 cmd1 < $FILE | cmd2 "> outfile" | cmd3 && cmd3 >> appendfile
-export a="hello world!" && echo "abc"'--$5--'"==$ $$==$?==$a    "PWD is $PWD
 echo '"a"'"a"'
-echo asdlkjfss  > adsdnfbsadjff >> aaaaaaaaaaaa << END | echo a || echo b
 echo a | wc -c | <<END cat > out/out3 && cat out/out3 && echo all done

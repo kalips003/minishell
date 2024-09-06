@@ -6,17 +6,16 @@
 /*   By: kalipso <kalipso@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/11 16:26:09 by kalipso           #+#    #+#             */
-/*   Updated: 2024/08/26 19:39:33 by kalipso          ###   ########.fr       */
+/*   Updated: 2024/09/04 11:32:26 by kalipso          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/minishell.h"
 
-
-void	sublim_pipe_v2(t_data *data, t_pipeline *pipe);
-char	*ft_sublim_v2(t_data *data, char *string, int bit);
-char	*sublim_dollar_v2(t_data *data, char *raw_arg, int bit);
-char	*ft_dollar_v2(t_data *data, char *raw_dollar, int *i);
+void		sublim_pipe_v2(t_data *data, t_pipeline *pipe);
+char		*ft_sublim_v2(t_data *data, char *string, int bit);
+char		*sublim_dollar_v2(t_data *data, char *raw_arg, int bit);
+char		*ft_dollar_v2(t_data *data, char *raw_dollar, int *i);
 static char	*extract_word(char *raw_line, int *i);
 
 ///////////////////////////////////////////////////////////////////////////////]
@@ -25,10 +24,8 @@ void	sublim_pipe_v2(t_data *data, t_pipeline *pipe)
 {
 	char	**ptr3;
 	t_cmd	*cmd;
-	// int		pipeline_sz = 0;
 
 	cmd = pipe->cmd;
-	// while (cmd && ++pipeline_sz)
 	while (cmd)
 	{
 		if (!cmd->cmd_arg)
@@ -44,10 +41,7 @@ void	sublim_pipe_v2(t_data *data, t_pipeline *pipe)
 		cmd->out_file = ft_sublim_v2(data, cmd->out_file, 1);
 		cmd = cmd->next;
 	}
-	// pipe->pids = mem(0, sizeof(int) * (pipeline_sz + 1));
-	// pipe->pids[pipeline_sz] = INT_MAX;
 }
-
 
 ///////////////////////////////////////////////////////////////////////////////]
 // takes: "abc"'ab$5"4'baaac"$5"$5
@@ -65,12 +59,15 @@ char	*ft_sublim_v2(t_data *data, char *string, int bit)
 	while (string[i])
 	{
 		if (string[i] == '\'')
-			sublim = join(sublim, trim(ft_extract_quotes_v2(&string[i], &i, '\''), "\'"), 0b11, 0);
+			sublim = join(sublim, trim(ft_extract_quotes_v2(&string[i],
+							&i, '\''), "\'"), 0b11, 0);
 		else if (string[i] == '\"')
-			sublim = join(sublim, sublim_dollar_v2(data, trim(ft_extract_quotes_v2(&string[i], &i, '\"'), "\""), bit), 0b11, 0);
+			sublim = join(sublim, sublim_dollar_v2(data,
+						trim(ft_extract_quotes_v2(&string[i], &i,
+								'\"'), "\""), bit), 0b11, 0);
 		else
-			sublim = join(sublim, sublim_dollar_v2(data, extract_word(string, &i), bit), 0b11, 0);
-		// ft_print_cat(i, sublim, 0b11);
+			sublim = join(sublim, sublim_dollar_v2(data,
+						extract_word(string, &i), bit), 0b11, 0);
 	}
 	if (!sublim)
 		return (print_fd(2, ERR4"malloc? sublim!\n"), string);
@@ -78,20 +75,9 @@ char	*ft_sublim_v2(t_data *data, char *string, int bit)
 	return (sublim);
 }
 
-
-static char	*extract_word(char *raw_line, int *i)
-{
-	int		len;
-	char	*rtrn;
-
-	len = len_m(&raw_line[*i], "\'\"");
-	rtrn = str("%1.*s", len, &raw_line[*i]);
-	*i += len;
-	return (rtrn);
-}
 ///////////////////////////////////////////////////////////////////////////////]
 // if !bit, dont sublim dollar
-// recieve: ecg'$5321=' i > ecg'($5) i
+// recieve: ecg$5321= i > ecg'($5) i
 char	*sublim_dollar_v2(t_data *data, char *raw_arg, int bit)
 {
 	int		j;
@@ -100,7 +86,7 @@ char	*sublim_dollar_v2(t_data *data, char *raw_arg, int bit)
 
 	rtrn = NULL;
 	j = 0;
-	if (!bit || !raw_arg)
+	if (!bit || !raw_arg || wii('$', raw_arg) == -1)
 		return (raw_arg);
 	while (raw_arg[j])
 	{
@@ -116,9 +102,6 @@ char	*sublim_dollar_v2(t_data *data, char *raw_arg, int bit)
 	free_s(raw_arg);
 	return (rtrn);
 }
-
-
-
 
 ///////////////////////////////////////////////////////////////////////////////]
 // recieve: raw, and pointer to i
@@ -147,4 +130,16 @@ char	*ft_dollar_v2(t_data *data, char *raw_dollar, int *i)
 		free_s(var);
 		return (rtrn);
 	}
+}
+
+///////////////////////////////////////////////////////////////////////////////]
+static char	*extract_word(char *raw_line, int *i)
+{
+	int		len;
+	char	*rtrn;
+
+	len = len_m(&raw_line[*i], "\'\"");
+	rtrn = str("%1.*s", len, &raw_line[*i]);
+	*i += len;
+	return (rtrn);
 }

@@ -2,8 +2,8 @@ NAME = minishell
 NAME_BONUS = minishell_b
 
 CC = cc
-FLAGS = -Wextra -Wall -g -fPIE -I$(HEADER_FOLDER)
-# FLAGS = -Wextra -Wall -Werror -g -fPIE -I$(HEADER_FOLDER)
+# FLAGS = -Wextra -Wall -g -fPIE -I$(HEADER_FOLDER)
+FLAGS = -Wextra -Wall -Werror -g -fPIE -I$(HEADER_FOLDER)
 
 all: $(NAME)
 
@@ -25,39 +25,28 @@ all: $(NAME)
 NAMEE = minishell
 NAMEE_BONUS = minishell_b
 
-
+# RUN MINISHELL
 a: $(NAMEE) small_clean
-	@rm -rf out && mkdir out
 	@$(call random_shmol_cat, teshting ... $@: minishell, 'hav fun ね? ($(word 1, $^))', $(CLS), );
 	./$(word 1, $^)
 
-
+# RUN MINISHELL & BASH TERMINAL
 b: $(NAMEE) small_clean
-	@mkdir out
 	gnome-terminal -- bash --posix &
 	@$(call random_shmol_cat, teshting ... $@: minishell, 'hav fun ね? ($(word 1, $^))', $(CLS), );
 	./$(word 1, $^)
 
+# RUN BASH
 t:
 	gnome-terminal -- bash --posix &
 
+# RUN MINISHELL & VALGRING 2> out/valgrind
 v: $(NAMEE) small_clean
-	@if [ ! -e out ]; then \
-		mkdir -p out; \
-	fi;
 	@$(call random_shmol_cat, "vlgrininnng ... $(word 1, $^)!", "$(ARG2)", $(CLS), );
 	-$(VALGRIND) ./$(word 1, $^) 2> out/valgrind
 
-BAD_ARG='echo a'
-
-w: $(NAMEE) small_clean
-	@if [ ! -e out ]; then \
-		mkdir -p out; \
-	fi;
-	@$(call random_shmol_cat, "vlgrininnng ... $(word 1, $^)!", "$(ARG2)", $(CLS), );
-	$(VALGRIND) bash -c './minishell <<< $(BAD_ARG)'
-
-
+# RUN TESTS IN data/TESTS UNTIL EMPTY LINE
+# RUN MINISHELL & VALGRING 2> out/valgrind
 m: $(NAMEE) small_clean
 	@while IFS= read -r line; do \
 		if [ -z "$$line" ]; then break; fi; \
@@ -69,17 +58,18 @@ m: $(NAMEE) small_clean
 		echo "\t$(C_1R_4G_1B)~ Press Enter to continue...$(RESET)"; read -p "" key < /dev/tty; \
 	done < data/TESTS
 
+# CHECK FD
 maieul: $(NAMEE) small_clean
 	@$(call random_shmol_cat, "teshiing ... $(word 1, $^)!", "lets find tis fd", $(CLS), )
 	@if [ ! -e traces ]; then \
 		mkdir -p traces; \
 	fi; \
 	strace -e dup2,dup,openat,clone,read,write,access,close,execve,pipe,pipe2 -tt -ff -o traces/trace \
-	./minishell -c "echo a"; \
+	./minishell -c "sleep 50 | sleep 50 | sleep 50"; \
 	strace-log-merge traces/trace | batcat -lstrace;
 
 small_clean:
-	@rm -rf ./out traces
+	-@rm -rf ./out traces
 	@if [ ! -e out ]; then \
 		mkdir -p out; \
 	fi;

@@ -6,7 +6,7 @@
 /*   By: kalipso <kalipso@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/14 16:12:38 by kalipso           #+#    #+#             */
-/*   Updated: 2024/08/26 23:33:24 by kalipso          ###   ########.fr       */
+/*   Updated: 2024/09/04 11:52:06 by kalipso          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,33 @@
 			██╔══██║  ██╔══╝░░██╔══██║██║██╔══██╗██╔══╝░░
 			██║░░██║  ██║░░░░░██║░░██║██║██║░░██║███████╗
 			╚═╝░░╚═╝  ╚═╝░░░░░╚═╝░░╚═╝╚═╝╚═╝░░╚═╝╚══════╝
+
+
+^C retour a la ligne? "sleep 255 | sleep 255 | sleep 255"
+check for return values after using a signal : 130 for sigint and 131 for sigquit (use globalvariable g_signalreceived)
+
+tests that break minishell:
+
+echo -nnnnnnnnnnnnnnnnnnnnnnnn""
+
+
+
+leak fd /dev/pts/1 -> ls
+unset PWD then pwd -> invalid free?
+echo ewkofwf > /dev/full -> no error message and wrong exit code
+
+
+
+// dirent.h
+DIR *opendir(const char *name);
+struct dirent *readdir(DIR *dirp);
+int closedir(DIR *dirp);
+
+for * wildcard
+
+
+
+
 
 
 cd: Change directory.
@@ -67,7 +94,7 @@ WIFCONTINUED(status):
     Returns a non-zero value if the child process has been resumed by SIGCONT.
 
 
-
+0x112233ff
 | < > & $ ` " ' \ ; * ? [ ] { } ( ) ! # << >> <<< \001 \002
 
 /: Directory separator.
@@ -99,18 +126,15 @@ STOCKER TOUT LES PID QQ PART, PROBABLEMEBT DAND LA GLOBALE
 LES REUTILISER POUR SIGkill
 ******************************************************************************/
 ///////////////////////////////////////////////////////////////////////////////]
+// int	g_signalreceived;
+
 int	main(int ac, char **av, char **env)
 {
 	t_data	data;
-	int		rtrn;
 
 	initialization(ac, av, env, &data);
 	while (1)
-	{
-		rtrn = ft_minishell(&data);
-		if (WEXITSTATUS(rtrn) == 255)
-			break ;
-	}
+		ft_minishell(&data);
 	end(&data, 0);
 	return (0);
 }
@@ -118,6 +142,19 @@ int	main(int ac, char **av, char **env)
 
 // 				SIGNALS
 /*
+struct sigaction {
+	sa_handler (*func) SIG_DFL; SIG_IGN; void handler(int signum);
+	sa_sigaction (*func) void handler(int signum, siginfo_t *info, void *context)
+	sa_mask:	what signals to ignore while handler is running
+	sa_flags: Flags that modify the behavior of the signal handling.
+			SA_RESTART; SA_NOCLDSTOP; SA_SIGINFO; SA_ONSTACK;
+}
+
+
+
+
+
+
 
 		0	???
 SIGHUP	1	Hangup detected on controlling terminal or death of controlling process	N/A

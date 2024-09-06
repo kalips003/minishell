@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_printf.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: agallon <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: kalipso <kalipso@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 13:38:31 by agallon           #+#    #+#             */
-/*   Updated: 2024/06/26 17:13:36 by agallon          ###   ########.fr       */
+/*   Updated: 2024/09/04 12:23:15 by kalipso          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,8 +46,20 @@ typedef struct s_flag
 //	#
 typedef int		(*t_func)(va_list, t_flags *);
 typedef char	*(*t_str)(va_list, t_flags *);
-////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////]
 //	#	PRINTF
+/// @brief printf with custom flags
+/// @param %t [ %.*t ] > put *num \t in front of the tab
+/// @param %t [ %-t ] > dont put \\n after each line (for gnl return)
+/// @param %t [ %#t ] > dont put \t on first line
+/// @param %t [ %+t ] > add char * in front of each line (as second arg)
+/// ----------------------------------------------
+/// @param %S [ % S ] > spacing, show white space
+/// @param %S [ %*S ] > print memory of size *num
+/// @param %S [ %.*S ] > add a \\n each sizeof (bit*)
+/// @param %S [ %#S ] > hexadecimal
+/// @param %S [ %-#S ] > no size 2 precision for hexa (useless)
+/// @param %S [ %+S ] > colors +128
 int		put(const char *str, ...);
 // int		f_1(const char *str, int *i, va_list args);
 int		print_fd(int fd, const char *str, ...);
@@ -86,7 +98,7 @@ int		size_num_base_un(unsigned long num, int base);
 int		f_format_num_un(t_flags *f, unsigned long num, int size_num);
 int		ft_putnbr_base_un(int fd, unsigned long nbr, char *base);
 void	*free_333(void *ptr);
-////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////]
 //	#	PRINT FLAG
 int		ft_string(va_list args, t_flags *flags);
 int		ft_char(va_list args, t_flags *flags);
@@ -103,8 +115,16 @@ int		ft_float(va_list args, t_flags *flags);
 int		ft_scientific(va_list args, t_flags *flags);
 int		ft_string_hexa(va_list args, t_flags *f);
 int		ft_tab(va_list args, t_flags *flags);
-////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////]
 //	#	STRING
+/// @brief sprintf with custom flags
+/// @param %s [ %.*s ] > truncate the string
+/// @param %s [ %*s ] > how many time you want to repeat the string
+/// @param ! %1s
+/// ----------------------------------------------
+/// @param %c [ %.*c ] > how many time you want to repeat the char
+/// ----------------------------------------------
+/// @param %x [ %.*x ] > precise the base as argument
 char	*str(char *str, ...);
 char	*f_2(char *str, int *i, va_list args);
 char	*join(char *begin, char *append, int bit, int size);//  lenght

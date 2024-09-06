@@ -117,7 +117,6 @@ t_gnl	*ini_node(t_gnl *first_list, char (*g_temp)[BUFFER_SIZE], int fd)
 	return (next_list);
 }
 
-
 ///////////////////////////////////////////////////////
 // #	RESET TEMP = COPY THE REMAINDER TO TEMP
 void	f_copy_rest(t_gnl *last_list, char (*g_temp)[BUFFER_SIZE], int fd)

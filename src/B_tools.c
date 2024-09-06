@@ -1,20 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   B_builtin_tools_1.c                                :+:      :+:    :+:   */
+/*   B_tools.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: kalipso <kalipso@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/11 08:28:22 by kalipso           #+#    #+#             */
-/*   Updated: 2024/08/26 19:30:17 by kalipso          ###   ########.fr       */
+/*   Updated: 2024/09/06 12:00:17 by kalipso          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/minishell.h"
 
-
 void	replace_var(t_data *data, char *to_replace, char *replacement);
 char	**pop_entry(char **env, char *to_pop);
+char	**pop_tab(char **env, char *to_pop);
 
 ///////////////////////////////////////////////////////////////////////////////]
 // replace the entry in the env tab
@@ -56,3 +56,25 @@ char	**pop_entry(char **env, char *to_pop)
 	return (new_tab);
 }
 
+// pop string
+// free old tab; return ptr to new tab
+char	**pop_tab(char **env, char *to_pop)
+{
+	char	(**new_tab) = NULL;
+	char	(**tab_ptr) = env - 1;
+
+	if (!env || !to_pop)
+		return (env);
+	tab_ptr = env - 1;
+	while (*(++tab_ptr))
+	{
+		if (*tab_ptr == to_pop)
+		{
+			free_s(*to_pop);
+			continue ;
+		}
+		new_tab = expand_tab(new_tab, *tab_ptr);
+	}
+	free_s(env);
+	return (new_tab);
+}
