@@ -6,27 +6,27 @@
 /*   By: kalipso <kalipso@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/02 06:21:51 by kalipso           #+#    #+#             */
-/*   Updated: 2024/08/26 17:48:52 by kalipso          ###   ########.fr       */
+/*   Updated: 2024/09/04 05:26:09 by kalipso          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/minishell.h"
 
-void	clear_cmd(t_data *data);
+void			clear_cmd(t_data *data);
 static t_cmd	*h_clean_cmd(t_cmd *cmd);
-void	end(t_data *data, int exit_code);
+void			end(t_data *data, int exit_code);
 
 ///////////////////////////////////////////////////////////////////////////////]
 // free double chain data->cmd
 void	clear_cmd(t_data *data)
 {
 	t_pipeline	*ptr1;
-	t_cmd	*ptr2;
-	void	*ptr_temp;
+	t_cmd		*ptr2;
+	void		*ptr_temp;
 
-	if (!data->cmd)
+	if (!data->pipeline)
 		return ;
-	ptr1 = data->cmd;
+	ptr1 = data->pipeline;
 	while (ptr1)
 	{
 		ptr2 = ptr1->cmd;
@@ -36,7 +36,7 @@ void	clear_cmd(t_data *data)
 		ptr1 = free_s(ptr1);
 		ptr1 = (t_pipeline *)ptr_temp;
 	}
-	data->cmd = NULL;
+	data->pipeline = NULL;
 }
 
 static t_cmd	*h_clean_cmd(t_cmd *cmd)
@@ -47,11 +47,14 @@ static t_cmd	*h_clean_cmd(t_cmd *cmd)
 	free_s(cmd->in_file);
 	free_s(cmd->out_file);
 	if (cmd->fd_in > 0)
-		close(cmd->fd_in);//			flkg m;fglok;;f;dlkm?
+		close(cmd->fd_in);
 	if (cmd->fd_out > 0)
 		close(cmd->fd_out);
 	ptr_temp = cmd->next;
 	free_s(cmd);
+	// close(0);
+	// close(1);
+	// close(2);
 	return (ptr_temp);
 }
 
@@ -60,6 +63,7 @@ void	end(t_data *data, int exit_code)
 {
 	free_tab(data->history);
 	free_tab(data->env);
+	free_tab(data->alias);
 	clear_cmd(data);
 	rl_clear_history();
 	if (data->fd_in_original >= 0)

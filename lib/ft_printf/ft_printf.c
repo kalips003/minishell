@@ -6,7 +6,7 @@
 /*   By: kalipso <kalipso@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/06 16:06:22 by agallon           #+#    #+#             */
-/*   Updated: 2024/08/26 16:09:01 by kalipso          ###   ########.fr       */
+/*   Updated: 2024/09/04 12:23:22 by kalipso          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,7 @@ static int	f_1(const char *str, int *i, va_list args, int fd)
 		[ %#S ] > hexadecimal
 		[ %-#S ] > no 2 precision for hexa
 		[ %+S ] > colors +128
+	%P	PERROR
 ******************************************************************************/
 int	put(const char *str, ...)
 {

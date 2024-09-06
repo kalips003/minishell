@@ -12,26 +12,27 @@
 
 #include "../inc/minishell.h"
 
-int	ft_minishell(t_data *data);
-int	ft_father(t_data *data);
-// int	ft_big_brother(t_data *data, t_pipeline *cmd);
-int	ft_child(t_data *data, t_cmd *cmd);
+int			ft_minishell(t_data *data);
+int			ft_father(t_data *data);
+int			ft_big_brother(t_data *data, t_pipeline *pipeline);
+static void	h_bigbro(t_data *data, t_cmd *ptr_cmd);
+int			ft_lil_brother(t_data *data, t_cmd *cmd);
 
-extern int g_pid;
+#define INPUT_TEXT "\001 \e[38;5;%dmm\e[38;5;%dmi\e[38;5;%dma\e[38;5;%dmo\e[38;5;%dmu\e[0m (\e[0;3%dm%d\e[0m): \002"
+#define INPUT_TEXT_CLEAN "\001 mianishell(%d): \002"
 
-// #define INPUT_TEXT " \033[38;5;%dmm\033[38;5;%dmi\033[38;5;%dma\033[38;5;%dmo\033[38;5;%dmu\e[0m (%d)> "
-#define INPUT_TEXT "\001 \033[38;5;%dmm\033[38;5;%dmi\033[38;5;%dma\033[38;5;%dmo\033[38;5;%dmu\e[0m (\033[0;3%dm%d\e[0m): \002"
-// #define INPUT_TEXT " input> "
 ///////////////////////////////////////////////////////////////////////////////]
+// input_txt = str(INPUT_TEXT_CLEAN, WEXITSTATUS(data->exit_code));
 // 1 loop per input
 int	ft_minishell(t_data *data)
 {
 	char	*input;
 	char	*input_txt;
 
-	// input_txt = str("\033[0;35;%dm (%d) input> \e[0m", WEXITSTATUS(data->exit_code), WEXITSTATUS(data->exit_code));
-	input_txt = str(INPUT_TEXT RESET, rand() % 256, rand() % 256, rand() % 256, rand() % 256, rand() % 256,
-		1 + !(WEXITSTATUS(data->exit_code)), WEXITSTATUS(data->exit_code));
+	ini_signal(data);
+	input_txt = str(INPUT_TEXT RESET, rand() % 256, rand() % 256, rand() % 256,
+			rand() % 256, rand() % 256,
+			1 + !(WEXITSTATUS(data->exit_code)), WEXITSTATUS(data->exit_code));
 	input = readline(input_txt);
 	free_s(input_txt);
 	if (!input)
@@ -42,7 +43,7 @@ int	ft_minishell(t_data *data)
 	if (ft_parsing_v2(data, input))
 	{
 		data->exit_code = 0x0200;
-		return (clear_cmd(data), free_s(input), 0);
+		return (free_s(input), 0);
 	}
 	data->history = expand_tab(data->history, input);
 	add_history(input);
@@ -59,19 +60,23 @@ int	ft_minishell(t_data *data)
 int	ft_father(t_data *data)
 {
 	t_pipeline	*pipeline;
-	int		rtrn;
+	int			rtrn;
 
-	pipeline = data->cmd;
-	if (!data->cmd)
+	pipeline = data->pipeline;
+	if (!data->pipeline)
 		return (perror(ERR3"empty args struct"), 1);
 	while (pipeline)
 	{
 		sublim_pipe_v2(data, pipeline);
 		rtrn = WEXITSTATUS(data->exit_code);
-		if (!pipeline->and_or || (pipeline->and_or == '&' && !rtrn) || (pipeline->and_or == '|' && rtrn))
-			rtrn = ft_big_brother_v2(data, pipeline);
-		// if (rtrn == 255)
-		// 	return (clear_cmd(data), rtrn);
+		// if (WIFSIGNALED(data->exit_code))
+		// {
+		// 	int		tmp_bit = 0;
+		// 	tmp_bit = WTERMSIG(data->exit_code);
+		// }
+		if (!pipeline->and_or || (pipeline->and_or == '&' && !rtrn)
+			|| (pipeline->and_or == '|' && rtrn))
+			rtrn = ft_big_brother(data, pipeline);
 		pipeline = pipeline->next;
 	}
 	return (clear_cmd(data), 0);
@@ -80,68 +85,79 @@ int	ft_father(t_data *data)
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 		does 1 chained list
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * **/
-// int	ft_big_brother(t_data *data, t_pipeline *pipeline)
-// {
-// 	pid_t	pid;
-// 	t_cmd	*ptr_cmd;
-// 	// int j = 0;
+int	ft_big_brother(t_data *data, t_pipeline *pipeline)
+{
+	pid_t	pid;
 
-// 	ptr_cmd = pipeline->cmd;
-// 	if (brother_builtin(data, ptr_cmd))
-// 		ptr_cmd = ptr_cmd->next;
-// 	if (!ptr_cmd)
-// 		return (0);
-// 	pid = fork();
-// 	g_pid = pid;
-// 	if (pid == -1)
-// 		return (perror(ERR7"fork"), 1);
-// 	if (!pid)
-// 	{
-// 		while (ptr_cmd && ptr_cmd->next)
-// 		{
-// 			if (ft_child(data, ptr_cmd))
-// 				end(data, WEXITSTATUS(data->exit_code));
-// 			ptr_cmd = ptr_cmd->next;
-// 		}
-// 		ft_exec(data, ptr_cmd);
-// 	}
-// 	else
-// 	{
-// 		// while (waitpid(-1,  &data->exit_code, 0) > 0)
-// 		// 	j++;
-// 		waitpid(pid, &data->exit_code, 0);
-// 	}
-// 	return (0);
-// }
+	ini_signal_v2(data);
+	if (!pipeline->cmd->next && brother_builtin_v2(data, pipeline->cmd))
+		return (0);
+	pid = fork();
+	if (pid == -1)
+		return (perror(ERR7"fork"), 1);
+	if (!pid)
+		h_bigbro(data, pipeline->cmd);
+	waitpid(pid, &data->exit_code, 0);
+	if (WIFSIGNALED(data->exit_code))
+		data->exit_code = WTERMSIG(data->exit_code) << 8;
+	return (0);
+}
+
+static void	h_bigbro(t_data *data, t_cmd *ptr_cmd)
+{
+	t_cmd	*first_cmd;
+	// int		tmp_bit = 0;
+	first_cmd = ptr_cmd;
+	ini_signal_exec(data);
+	while (ptr_cmd)
+	{
+		ft_lil_brother(data, ptr_cmd);
+		ptr_cmd = ptr_cmd->next;
+	}
+	close(STDIN);
+	ptr_cmd = first_cmd;
+	while (ptr_cmd)
+	{
+		waitpid(ptr_cmd->pid, &data->exit_code, 0);
+		// put("exit_code = %d\n", data->exit_code);
+		// if (WIFSIGNALED(data->exit_code))
+		// {
+		// 	put("(PID=%d)WIFSIGNALED(data->exit_code) = %d\n", ptr_cmd->pid, WIFSIGNALED(data->exit_code));
+		// 	put("(PID=%d)WTERMSIG(data->exit_code) = %d\n", ptr_cmd->pid, WTERMSIG(data->exit_code));
+		// 	put("tmp_bit = %d\n", tmp_bit);
+		// 	tmp_bit = WTERMSIG(data->exit_code);
+		// }
+		ptr_cmd = ptr_cmd->next;
+	}
+	// put("tmp_bit final = %d\n", tmp_bit);
+	// if (tmp_bit)
+	// 	end(data, tmp_bit + 128);
+	end(data, WEXITSTATUS(data->exit_code));
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 		takes a cmd node, return the return value of child
 		echo a | sleep 5 | echo b
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * **/
-// int	ft_child(t_data *data, t_cmd *cmd)
-// {
-// 	int		fd[2];
-// 	pid_t	pid;
-// 	// int j = 0;
+int	ft_lil_brother(t_data *data, t_cmd *cmd)
+{
+	int		fd[2];
 
-// 	if (pipe(fd) == -1)
-// 		return (perror(ERR7"pipe"), 1);
-// 	pid = fork();
-// 	if (pid == -1)
-// 		return (perror(ERR7"fork"), close(fd[0]), close(fd[1]), 2);
-// 	if (!pid)
-// 	{
-// 		close(fd[0]);
-// 		dup_close(fd[1], STDOUT);
-// 		ft_exec(data, cmd);
-// 	}
-// 	else
-// 	{
-// 		close(fd[1]);
-// 		dup_close(fd[0], STDIN);
-// 		// while (waitpid(-1,  &data->exit_code, 0) > 0)
-// 		// 	j++;
-// 		waitpid(pid, &data->exit_code, 0);
-// 	}
-// 	return (0);
-// }
+	if (cmd->next)
+	{
+		if (pipe(fd) == -1)
+			(perror(ERR7"pipe"), end(data, 66));
+	}
+	cmd->pid = fork();
+	if (cmd->pid == -1)
+		(perror(ERR7"fork"), close(fd[0]), close(fd[1]), end(data, 66));
+	if (!cmd->pid)
+	{
+		if (cmd->next)
+			(close(fd[0]), dup_close(fd[1], STDOUT));
+		ft_exec_v2(data, cmd, data->env);
+	}
+	else if (cmd->next)
+		(close(fd[1]), dup_close(fd[0], STDIN));
+	return (0);
+}

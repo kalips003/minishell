@@ -12,44 +12,47 @@
 
 #include "../inc/minishell.h"
 
-// void		ft_exec(t_data *data, t_cmd *cmd);
-void		h_734_redirection(t_data *data, t_cmd *cmd);
-void		ft_heredoc(t_data *data, t_cmd *cmd);
-char		*find_cmd(char *command, char **env);
+void		ft_exec_v2(t_data *data, t_cmd *cmd, char **env);
+static void	h_734_redirection(t_data *data, t_cmd *cmd);
+static void	ft_heredoc(t_data *data, t_cmd *cmd);
+static char	*find_cmd(char *command, char **env);
 static char	*find_parsing(char *command, char **env);
 
 ///////////////////////////////////////////////////////////////////////////////]
 /*******************************************************************************
 	takes a cmd link, redirect to correct fd, execute it, end the child
 ******************************************************************************/
-// void	ft_exec(t_data *data, t_cmd *cmd)
-// {
-// 	char	*cmd_exe;
+void	ft_exec_v2(t_data *data, t_cmd *cmd, char **env)
+{
+	char	*cmd_exe;
 
-// 	if (!cmd)
-// 		end(data, 0);
-// 	// sublim_child(data, cmd);
-// 	h_734_redirection(data, cmd);
-// 	child_builtin(data, cmd);
-// 	cmd_exe = find_cmd(cmd->cmd_arg[0], data->env);
-// 	if (!cmd_exe)
-// 	{
-// 		print_fd(2, ERR6"%s: not found\n", cmd->cmd_arg[0]);
-// 		end(data, 127);
-// 	}
-// 	if (execve(cmd_exe, cmd->cmd_arg, data->env) == -1)
-// 	{
-// 		perror(ERR7"error execve");
-// 		free_s(cmd_exe);
-// 		end(data, 1);
-// 	}
-// }
+	if (!cmd)
+		end(data, 0);
+	h_734_redirection(data, cmd);
+	if (child_builtin_v2(data, cmd))
+		end(data, data->exit_code);
+	cmd_exe = find_cmd(cmd->cmd_arg[0], data->env);
+	if (!cmd_exe)
+	{
+		print_fd(2, ERR6"%s: not found (%s)\n",
+			cmd->cmd_arg[0], strerror(errno));
+		end(data, 127);
+	}
+	if (execve(cmd_exe, cmd->cmd_arg, env) == -1)
+	{
+		print_fd(2, ERR6"error execve (%s)\n", strerror(errno));
+		// perror(ERR7"error execve");
+		free_s(cmd_exe);
+		end(data, 1);
+	}
+}
 
 ///////////////////////////////////////////////////////////////////////////////]
-void	h_734_redirection(t_data *data, t_cmd *cmd)
+static void	h_734_redirection(t_data *data, t_cmd *cmd)
 {
 	if (cmd->in_file && cmd->out_file && same_str(cmd->in_file, cmd->out_file))
-		return (print_fd(2, ERR"same input\\output file '%s'\n", cmd->in_file), end(data, 3));
+		return (print_fd(2, ERR"same input\\output file '%s'\n",
+				cmd->in_file), end(data, 3));
 	if (cmd->in_file && cmd->in_bit == 1)
 	{
 		cmd->fd_in = open(cmd->in_file, O_RDONLY);
@@ -62,19 +65,23 @@ void	h_734_redirection(t_data *data, t_cmd *cmd)
 	if (cmd->out_file && cmd->out_bit)
 	{
 		if (cmd->out_bit == 1)
-			cmd->fd_out = open(cmd->out_file, (O_WRONLY | O_CREAT | O_TRUNC), 0777);
+			cmd->fd_out = open(cmd->out_file,
+					(O_WRONLY | O_CREAT | O_TRUNC), 0777);
 		else if (cmd->out_bit == 2)
-			cmd->fd_out = open(cmd->out_file, (O_WRONLY | O_CREAT | O_APPEND), 0777);
+			cmd->fd_out = open(cmd->out_file,
+					(O_WRONLY | O_CREAT | O_APPEND), 0777);
 		if (cmd->fd_out < 0)
 			return (perror(cmd->out_file), end(data, 5));
 		dup_close(cmd->fd_out, STDOUT_FILENO);
 	}
+	if (data->fd_in_original >= 0)
+		close(data->fd_in_original);
+	data->fd_in_original = -1;
 }
-
 
 ///////////////////////////////////////////////////////////////////////////////]
 // create child that will pipe the input
-void	ft_heredoc(t_data *data, t_cmd *cmd)
+static void	ft_heredoc(t_data *data, t_cmd *cmd)
 {
 	int		fd[2];
 	pid_t	pid;
@@ -92,9 +99,10 @@ void	ft_heredoc(t_data *data, t_cmd *cmd)
 		data->fd_in_original = -1;
 		while (1)
 		{
-			tmp = readline(/* C_415 */"heredoc:"/* RESET */);
+			tmp = readline(C_415"heredoc:"RESET);
 			if (!tmp || same_str(tmp, cmd->in_file))
 				(close(fd[1]), free_s(tmp), end(data, 0));
+			// tmp = sublim_dollar_v2(data, tmp, 1);
 			print_fd(fd[1], "%s\n", tmp);
 			tmp = free_s(tmp);
 		}
@@ -106,15 +114,18 @@ void	ft_heredoc(t_data *data, t_cmd *cmd)
 		dup_close(fd[0], STDIN);
 		waitpid(pid, NULL, 0);
 	}
-		// return (close(fd[1]), dup_close(fd[0], STDIN), waitpid(pid, NULL, 0), 0);
-		// return (close(fd[1]), dup_close(fd[0], STDIN), wait(NULL), 0);
 }
 
-
 ///////////////////////////////////////////////////////////////////////////////]
+/*
+ mianishell(0): export ABC="hello"
+ mianishell(0): <<$ABC | cat
+heredoc:this is how you say hi $ABC
+*/
+
 // return full path of command > /path/to/command
 // 		./command/path > ./command/path
-char	*find_cmd(char *command, char **env)
+static char	*find_cmd(char *command, char **env)
 {
 	char	*rtrn;
 
