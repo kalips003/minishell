@@ -6,7 +6,7 @@
 /*   By: kalipso <kalipso@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/11 16:55:43 by marvin            #+#    #+#             */
-/*   Updated: 2024/09/04 05:30:43 by kalipso          ###   ########.fr       */
+/*   Updated: 2024/09/07 13:04:29 by kalipso          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,7 @@ typedef struct s_data
 	char				**env;
 	char				**alias;
 	char				**history;
+	char				**alias;
 	int					fd_in_original;
 	t_pipeline			*pipeline;
 	int					exit_code;
@@ -93,6 +94,18 @@ typedef struct s_cmd
 	char			sublim;
 	struct s_cmd	*next;
 }	t_cmd;
+
+typedef struct s_folder
+{
+	DIR 		*dir;
+	struct dirent *entry;
+	char		**all_files;
+	char 		*folder_path;
+	int			floor;
+	char 		*pattern_to_match;
+	struct s_folder **next;
+
+}	t_folder;
 
 ///////////////////////////////////////////////////////////////////////////////]
 /********************************
@@ -142,6 +155,7 @@ int			cmd_pwd(t_data *data, t_cmd *cmd);
 //
 void		replace_var(t_data *data, char *to_replace, char *replacement);
 char		**pop_entry(char **env, char *to_pop);
+char		**pop_tab(char **env, char *to_pop);
 /********************************
 		T	TOOLS
 ********************************/
@@ -171,6 +185,17 @@ int			initialization(int ac, char **av, char **env, t_data *data);
 ********************************/
 void		clear_cmd(t_data *data);
 void		end(t_data *data, int exit_code);
+/********************************
+		WILDCARD
+********************************/
+void	sublim_wildcard(t_cmd *cmd);
+char	**cut_pattern(char *pattern);
+t_folder	*new_folder_wildcard(t_folder *previous, char *folder_path, char **pattern);
+char	**return_all_match(t_folder *first);
+void	*clean_folder(t_folder *first);
+int	is_a_match(char *pattern, char *string);
+char	**expand_tab_tab(char **input, char **to_add, int bit);
+
 
 # define INPUT_TXT "\033[0;31mm\033[0;32mi\033[0;33ma\033[0;34mo\033[0;35mu\e[0m > "
 # define MSG_REDI "syntax error near unexpected token '%c'\n"

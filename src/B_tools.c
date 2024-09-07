@@ -6,7 +6,7 @@
 /*   By: kalipso <kalipso@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/11 08:28:22 by kalipso           #+#    #+#             */
-/*   Updated: 2024/09/06 12:00:17 by kalipso          ###   ########.fr       */
+/*   Updated: 2024/09/07 11:38:12 by kalipso          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ char	**pop_tab(char **env, char *to_pop)
 	{
 		if (*tab_ptr == to_pop)
 		{
-			free_s(*to_pop);
+			to_pop = free_s(to_pop);
 			continue ;
 		}
 		new_tab = expand_tab(new_tab, *tab_ptr);

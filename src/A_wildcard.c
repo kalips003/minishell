@@ -6,7 +6,7 @@
 /*   By: kalipso <kalipso@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/04 11:29:53 by kalipso           #+#    #+#             */
-/*   Updated: 2024/09/06 14:49:18 by kalipso          ###   ########.fr       */
+/*   Updated: 2024/09/07 12:34:51 by kalipso          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,43 +21,57 @@ static void	h_new_folder_wildcard(t_folder *folder, char **pattern);
 char	**return_all_match(t_folder *first);
 void	*clean_folder(t_folder *first);
 int	is_a_match(char *pattern, char *string);
+static void	h_sublim_wildcard(t_cmd *cmd, int i, char ***rtrn);
 char	**expand_tab_tab(char **input, char **to_add, int bit);
 
 ///////////////////////////////////////////////////////////////////////////////]
-
-typedef struct s_folder
-{
-	DIR 		*dir;
-	struct dirent *entry;
-	char		**all_files;
-	char 		*folder_path;
-	int			floor;
-	char 		*pattern_to_match;
-	struct s_folder **next;
-
-}	t_folder;
 
 ///////////////////////////////////////////////////////////////////////////////]
 // recieve: args = {echo, */*.c, -abc} > {echo, lib/file.c, .. src/f2.c, -abc}
 void	sublim_wildcard(t_cmd *cmd)
 {
-	char (**rtrn) = NULL;
-	int	(i) = -1;
+	char		(**rtrn) = NULL;
+	int			(i) = -1;
 	if(!cmd->cmd_arg)
 		return ;
-	while (*cmd->cmd_arg[++i])
+	while (cmd->cmd_arg[++i])
 	{
 		if (wii('*', cmd->cmd_arg[i]) >= 0)
 		{
-			char **pattern = cut_pattern(*cmd->cmd_arg[i]);
-			t_folder *folder = new_folder_wildcard(NULL, str("."), pattern);
-			rtrn = expand_tab_tab(rtrn, return_all_match(folder), 0b11);
-			clean_folder(folder);
-			free_tab(pattern);
+			h_sublim_wildcard(cmd, i, &rtrn);
+			// pattern = cut_pattern(cmd->cmd_arg[i]);
+			// folder = new_folder_wildcard(NULL, str("."), pattern);
+			// char **allmatch = return_all_match(folder);
+			// if (allmatch)
+			// 	rtrn = expand_tab_tab(rtrn, allmatch, 0b11);
+			// else
+			// 	rtrn = expand_tab(rtrn, str("%1s", cmd->cmd_arg[i]));
+			// clean_folder(folder);
+			// free_tab(pattern);
 		}
+		else
+			rtrn = expand_tab(rtrn, str("%1s", cmd->cmd_arg[i]));
 	}
 	free_tab(cmd->cmd_arg);
 	cmd->cmd_arg = rtrn;
+}
+
+static void	h_sublim_wildcard(t_cmd *cmd, int i, char ***rtrn)
+{
+	char (**pattern) = NULL;
+	t_folder	*folder;
+	char (**allmatch) = NULL;
+	
+	
+	pattern = cut_pattern(cmd->cmd_arg[i]);
+	folder = new_folder_wildcard(NULL, str("."), pattern);
+	allmatch = return_all_match(folder);
+	if (allmatch)
+		*rtrn = expand_tab_tab(*rtrn, allmatch, 0b11);
+	else
+		*rtrn = expand_tab(*rtrn, str("%1s", cmd->cmd_arg[i]));
+	clean_folder(folder);
+	free_tab(pattern);
 }
 
 ///////////////////////////////////////////////////////////////////////////////]
@@ -75,7 +89,7 @@ char	**cut_pattern(char *pattern)
 
 	if (!rtrn)
 		return (NULL);
-	if (*pattern == '/');
+	if (*pattern == '/')
 		rtrn[0] = join("/", rtrn[0], 0b01, 0);
 	while (rtrn[++i])
 	{
@@ -102,7 +116,7 @@ t_folder	*new_folder_wildcard(t_folder *previous, char *folder_path, char **patt
 		return (NULL);
 	if (previous)
 	{
-		folder->floor = previous->next + 1;
+		folder->floor = previous->floor + 1;
 		previous->next = (t_folder **)expand_tab((char **)previous->next, (char *)folder);
 	}
 	folder->folder_path = folder_path;// malloccd
@@ -119,7 +133,7 @@ static void	h_new_folder_wildcard(t_folder *folder, char **pattern)
 {
 	char *full_path;
 	
-	folder->entry = 1;
+	folder->entry = (struct dirent*)1;
 	while (folder->entry) 
 	{
 		folder->entry = readdir(folder->dir);
