@@ -29,6 +29,7 @@ void	ft_exec_v2(t_data *data, t_cmd *cmd, char **env)
 	if (!cmd)
 		end(data, 0);
 	h_734_redirection(data, cmd);
+	sublim_wildcard(cmd);
 	if (child_builtin_v2(data, cmd))
 		end(data, data->exit_code);
 	cmd_exe = find_cmd(cmd->cmd_arg[0], data->env);

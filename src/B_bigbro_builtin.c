@@ -70,8 +70,7 @@ int	cmd_export(t_data *data, t_cmd *cmd)
 	first_arg = cmd->cmd_arg[1];
 	first_equal = wii('=', first_arg);
 	if (!first_arg || first_equal < 0)
-		return (put("==%d\n\n", first_equal),
-			put("%+-t", data->env, "export "), 1);
+		return (put("%+-t", data->env, "export "), 0);
 	// temp_equal = len_m(&first_arg[first_equal],
 	// 		";|&=()[]{}!@#^*+-/\\~%?:,<>$\'\"");
 	var = str("%1.*s", len_m(first_arg, "=") + 1, first_arg);
@@ -88,7 +87,7 @@ int	cmd_unset(t_data *data, t_cmd *cmd)
 
 	first_arg = cmd->cmd_arg[1];
 	if (!first_arg)
-		return (put(ERR0"unset: not enough arguments\n"), -1);
+		return (0);
 	var = str("%1s=", first_arg);
 	data->env = pop_entry(data->env, var);
 	free_s(var);
