@@ -6,7 +6,7 @@
 /*   By: umosse <umosse@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/11 08:28:22 by kalipso           #+#    #+#             */
-/*   Updated: 2024/09/03 17:20:27 by umosse           ###   ########.fr       */
+/*   Updated: 2024/09/07 16:18:10 by umosse           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@ char		*ft_extract_quotes_v2(char *raw_line, int *i, char quote);
 ///////////////////////////////////////////////////////////////////////////////]
 // started at the beginning of a word
 // "      "' sdaf a'"dklfj ;a:'"$ABV
-
 // takes the START of the raw, and work with the &i
 // increment i
 // stops when find: " \t\n|&<>;"

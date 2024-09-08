@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Z_exit.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kalipso <kalipso@student.42.fr>            +#+  +:+       +#+        */
+/*   By: umosse <umosse@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/02 06:21:51 by kalipso           #+#    #+#             */
-/*   Updated: 2024/09/07 13:04:11 by kalipso          ###   ########.fr       */
+/*   Updated: 2024/09/07 16:26:15 by umosse           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,9 +52,6 @@ static t_cmd	*h_clean_cmd(t_cmd *cmd)
 		close(cmd->fd_out);
 	ptr_temp = cmd->next;
 	free_s(cmd);
-	// close(0);
-	// close(1);
-	// close(2);
 	return (ptr_temp);
 }
 
@@ -63,7 +60,6 @@ void	end(t_data *data, int exit_code)
 {
 	free_tab(data->history);
 	free_tab(data->env);
-	free_tab(data->alias);
 	clear_cmd(data);
 	rl_clear_history();
 	if (data->fd_in_original >= 0)

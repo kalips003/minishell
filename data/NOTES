@@ -120,3 +120,79 @@ Common flags used with open():
     O_TRUNC: Truncate the file to zero length if it already exists.
 
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * **/
+
+
+///////////////////////////////////////////////////////////////////////////////]
+//  			CHILD RETURN
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+
+	waitpid(pid, &status, 0)
+WIFEXITED(status): Returns true if the child terminated normally (by calling exit or returning from main).
+WEXITSTATUS(status): Returns the exit status of the child. This should only be used if WIFEXITED(status) is true.
+WIFSIGNALED(status): Returns true if the child process was terminated by a signal.
+WTERMSIG(status): Returns the signal number that caused the child to terminate. This should only be used if WIFSIGNALED(status) is true.
+
+
+WIFEXITED(status):
+    This macro checks if the child process terminated normally (i.e., by calling exit() or returning from main).
+    Returns a non-zero value (true) if the child terminated normally.
+WEXITSTATUS(status):
+    This macro retrieves the exit status of the child if WIFEXITED(status) is true.
+    It extracts the low-order 8 bits (i.e., the least significant byte) of the status, which is the actual exit code passed by the child process using exit() or returned from main.
+WIFSIGNALED(status):
+    This macro checks if the child process terminated due to a signal (i.e., if it was killed by a signal).
+    Returns a non-zero value if the child process was terminated by a signal.
+WTERMSIG(status):
+    If WIFSIGNALED(status) is true, this macro retrieves the signal number that caused the child process to terminate.
+WIFSTOPPED(status):
+    This macro checks if the child process is currently stopped (not terminated) because it received a signal that stopped it.
+    Returns a non-zero value if the child process is stopped.
+WSTOPSIG(status):
+    If WIFSTOPPED(status) is true, this macro retrieves the signal number that caused the child process to stop.
+WIFCONTINUED(status):
+    This macro checks if the child process was resumed after being stopped (only relevant in certain systems).
+    Returns a non-zero value if the child process has been resumed by SIGCONT.
+
+
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * **/
+
+
+
+///////////////////////////////////////////////////////////////////////////////]
+//  			SIGNALS
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+		0	???
+SIGHUP	1	Hangup detected on controlling terminal or death of controlling process	N/A
+SIGINT	2	Interrupt from keyboard	Ctrl + C
+SIGQUIT	3	Quit from keyboard	Ctrl + \
+SIGILL	4	Illegal Instruction	N/A
+SIGTRAP	5	Trace/breakpoint trap	N/A
+SIGABRT	6	Abort signal from abort	N/A
+SIGBUS	7	Bus error (bad memory access)	N/A
+SIGFPE	8	Floating-point exception	N/A
+SIGKILL	9	Kill signal (cannot be caught or ignored)	N/A
+SIGUSR1	10	User-defined signal 1	N/A
+SIGSEGV	11	Segmentation fault	N/A
+SIGUSR2	12	User-defined signal 2	N/A
+SIGPIPE	13	Broken pipe: write to pipe with no readers	N/A
+SIGALRM	14	Timer signal from alarm	N/A
+SIGTERM	15	Termination signal	N/A
+SIGSTKFLT	16	Stack fault on coprocessor	N/A
+SIGCHLD	17	Child stopped or terminated	N/A
+SIGCONT	18	Continue if stopped	N/A
+SIGSTOP	19	Stop process	N/A
+SIGTSTP	20	Stop typed at terminal	Ctrl + Z
+SIGTTIN	21	Terminal input for background process	N/A
+SIGTTOU	22	Terminal output for background process	N/A
+SIGURG	23	Urgent condition on socket	N/A
+SIGXCPU	24	CPU time limit exceeded	N/A
+SIGXFSZ	25	File size limit exceeded	N/A
+SIGVTALRM	26	Virtual alarm clock	N/A
+SIGPROF	27	Profiling timer expired	N/A
+SIGWINCH	28	Window resize signal	N/A
+SIGIO	29	I/O now possible	N/A
+SIGPWR	30	Power failure	N/A
+SIGSYS	31	Bad system call	N/A
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * **/

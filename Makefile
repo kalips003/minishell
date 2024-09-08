@@ -65,7 +65,7 @@ maieul: $(NAMEE) small_clean
 		mkdir -p traces; \
 	fi; \
 	strace -e dup2,dup,openat,clone,read,write,access,close,execve,pipe,pipe2 -tt -ff -o traces/trace \
-	./minishell -c "sleep 50 | sleep 50 | sleep 50"; \
+	./minishell -c "cat | sleep 50 | ls"; \
 	strace-log-merge traces/trace | batcat -lstrace;
 
 small_clean:

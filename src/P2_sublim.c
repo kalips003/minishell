@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   P2_sublim.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kalipso <kalipso@student.42.fr>            +#+  +:+       +#+        */
+/*   By: agallon <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/11 16:26:09 by kalipso           #+#    #+#             */
-/*   Updated: 2024/09/04 11:32:26 by kalipso          ###   ########.fr       */
+/*   Updated: 2024/09/07 21:26:34 by agallon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,6 @@ void	sublim_pipe_v2(t_data *data, t_pipeline *pipe)
 	cmd = pipe->cmd;
 	while (cmd)
 	{
-		if (!cmd->cmd_arg)
-			cmd->cmd_arg = expand_tab(cmd->cmd_arg, str("cat"));
 		ptr3 = cmd->cmd_arg;
 		while (ptr3 && *ptr3)
 		{
@@ -70,7 +68,7 @@ char	*ft_sublim_v2(t_data *data, char *string, int bit)
 						extract_word(string, &i), bit), 0b11, 0);
 	}
 	if (!sublim)
-		return (print_fd(2, ERR4"malloc? sublim!\n"), string);
+		return (print_fd(2, ERR4"some error occured honey!\n"), string);
 	free_s(string);
 	return (sublim);
 }
@@ -86,7 +84,7 @@ char	*sublim_dollar_v2(t_data *data, char *raw_arg, int bit)
 
 	rtrn = NULL;
 	j = 0;
-	if (!bit || !raw_arg || wii('$', raw_arg) == -1)
+	if (!bit || !raw_arg)
 		return (raw_arg);
 	while (raw_arg[j])
 	{
@@ -122,7 +120,7 @@ char	*ft_dollar_v2(t_data *data, char *raw_dollar, int *i)
 	else
 	{
 		b = len_m(&raw_dollar[*i], " \t\n\r\v\f;|&=()[]{}!@#^*+-/\\~%?:,<>$\'\"");
-		if (!b && ++(*i))
+		if (!b)
 			return (str("$"));
 		var = str("%1.*s=", b, &raw_dollar[*i]);
 		*i += b;

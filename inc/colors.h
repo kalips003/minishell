@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   colors.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kalipso <kalipso@student.42.fr>            +#+  +:+       +#+        */
+/*   By: umosse <umosse@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/14 14:19:41 by kmendes-          #+#    #+#             */
-/*   Updated: 2024/09/04 02:11:20 by kalipso          ###   ########.fr       */
+/*   Updated: 2024/08/23 15:06:48 by umosse           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,16 +16,16 @@
 # define ERR "\033[0;31mError - \e[0m"
 # define ERRM "\033[0;48;1mError ( MALLOC )\n\e[0m"
 
-# define ERR0 "\033[38;5;121mError (0) - \e[0m"
-# define ERR1 "\033[38;5;31mError (1) - \e[0m"
-# define ERR2 "\033[38;5;45mError (2) - \e[0m"
-# define ERR3 "\033[38;5;167mError (3) - \e[0m"
-# define ERR4 "\033[38;5;176mError (4) - \e[0m"
-# define ERR5 "\033[38;5;73mError (5) - \e[0m"
-# define ERR6 "\033[38;5;100mError (6) - \e[0m"
-# define ERR7 "\033[38;5;73mError (7) - \e[0m"
-# define ERR8 "\033[38;5;92mError (8) - \e[0m"
-# define ERR9 "\033[38;5;82mError (9) - \e[0m"
+# define ERR0 "\033[38;5;121mError (0)- \e[0m"
+# define ERR1 "\033[38;5;31mError (1)- \e[0m"
+# define ERR2 "\033[38;5;45mError (2)- \e[0m"
+# define ERR3 "\033[38;5;167mError (3)- \e[0m"
+# define ERR4 "\033[38;5;176mError (4)- \e[0m"
+# define ERR5 "\033[38;5;73mError (5)- \e[0m"
+# define ERR6 "\033[38;5;100mError (6)- \e[0m"
+# define ERR7 "\033[38;5;73mError (7)- \e[0m"
+# define ERR8 "\033[38;5;92mError (8)- \e[0m"
+# define ERR9 "\033[38;5;82mError (9)- \e[0m"
 
 # define CLEAR "\e[2J\e[H"
 # define CLS "\e[2J\e[H"

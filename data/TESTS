@@ -1,23 +1,46 @@
-echo a | sleep 3 | echo b
-export ABC='$helo' && echo $ABC && unset ABC &&  echo :$ABC
-export ABC="HELLO" && echo $ABC && unset ABC &&  echo :$ABC
-export ABC="$helo" && echo $ABC && unset ABC &&  echo :$ABC
-echo a"0123456789""abcdefgh"
-echo "asdf"
-echo "asdf""asdf"
-echo a && echo b
-echo "its workinggggg"
-export ABC="hello wold" && echo $ABC
-
-echo asdlkjfss  > out/adsdnfbsadjff >> out/aaaaaaaaaaaa << END | echo a || echo b
-export a="hello world!" && echo "abc"'--$5--'"==$ $$==$?==$a    "PWD is $PWD
-
-
-
-
-echo hello > txt | cat
-grep "error" < log.txt | sort | uniq > errors.txt 2> errors.log
-cmd1 < infile | cmd2 > outfile | cmd3 >> appendfile
-cmd1 < $FILE | cmd2 "> outfile" | cmd3 && cmd3 >> appendfile
-echo '"a"'"a"'
-echo a | wc -c | <<END cat > out/out3 && cat out/out3 && echo all done
+/bin/ls
+"/bin/ls"
+"'/bin/ls'"
+'/bin/ls'
+ec"ho" "abc"
+"ls"
+'pwd'
+echo
+echo -n abc
+echo -nnnnnnnn abc
+echo -nnnnnnnm abc
+echo -nnnnnnn""
+exit
+exit 1
+exit 66
+exit 2a
+exit 2 abc
+false; echo $?
+true; echo $?
+expr $? + $?
+"echo" abc "cde" "asdf'dasf"''''""
+echo "cat lol.c | cat > lol.c"
+export ABC="HELLO correcteur"; echo '$ABC'.....$ABC
+env
+export
+unset ABC
+export A?B=asdfasdf
+export ABC+="You are so beautiful"
+export ABC+++++++++++++="You are so beautiful"
+cd .. && pwd
+cd adsfadsf
+echo aaaaaaaaaa | grep a | wc -c
+unset PATH; ls
+echo abc > out/1
+cat < out/1
+echo aaaaaaaaaaaasdfafsdfsdfddffdafddfdfsddd >>out/1
+<Makefile cat | grep a | wc -l > out/2 && echo out/2
+cat | cat | ls
+echo a | sleep 3 | echo b && echo c || echo d || echo h
+echo $PATH
+echo "$PATH"
+echo "$USER"
+echo '$USER'
+echo *
+echo */*/*a
+export a="hello world!" && echo "abc"'--$5--'"==$  $$==$?==$a    "PWD is $PWD
