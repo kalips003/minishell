@@ -6,12 +6,13 @@
 /*   By: kalipso <kalipso@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/19 17:54:09 by kalipso           #+#    #+#             */
-/*   Updated: 2024/09/06 14:50:23 by kalipso          ###   ########.fr       */
+/*   Updated: 2024/09/08 13:42:34 by kalipso          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/libft.h"
-#include "../inc/minishell.h"
+// #include "../inc/minishell.h"
+#include <dirent.h>
 
 /*******************************************************************************
 ******************************************************************************/
@@ -28,11 +29,8 @@
 
 
 ******************************************************************************/
+///////////////////////////////////////////////////////////////////////////////]
 
-// #define DT_UNKNOWN  0  // Unknown file type
-// #define DT_REG      8  // Regular file
-// #define DT_DIR      4  // Directory
-// #define DT_LNK      10 // Symbolic link
 
 typedef struct s_folder
 {
@@ -55,13 +53,15 @@ t_folder	*new_folder(t_folder *previous, char *folder_path)
 		folder->floor = previous->next + 1;
 		previous->next = (t_folder **)expand_tab((char **)previous->next, (char *)folder);
 	}
-	folder->folder_path = folder_path;// malloccd
+	folder->folder_path = folder_path;
 	folder->dir = opendir(folder_path);
 	if (!folder->dir)
+	{
+		put("adsfhsjklljkjkjkjkjkjkjkjkjk");
 		return (perror("opendir"), NULL);
+	}
 	folder->entry = 1;
-	// folder->entry = readdir(folder->dir);
-	while (folder->entry) 
+	while (folder->entry)
 	{
 		folder->entry = readdir(folder->dir);
 		if (!folder->entry || same_str(folder->entry->d_name, ".") || same_str(folder->entry->d_name, ".."))
@@ -75,7 +75,6 @@ t_folder	*new_folder(t_folder *previous, char *folder_path)
 			else
 				full_path = free_s(full_path);
 		}
-		// folder->entry = readdir(folder->dir);
 	}
 	closedir(folder->dir);
 	return (folder);
@@ -113,60 +112,28 @@ void	print_folder(t_folder *first)
 			print_folder(*p_leaf);
 	}
 }
-
-///////////////////////////////////////////////////////////////////////////////]
-/// return 1 if is a match, 0 if not
-/// we match 'ab*cd*f*' with each file in current directory 'ab....cd....f...'
-// 		'a*b' > 'a..................b'
-int	is_a_match(char *pattern, char *string)
-{
-	if (!pattern || !string)
-		return (pattern == string);
-	if (!*pattern && !*string)
-		return (1);
-	if (*pattern == '*')
-		return (is_a_match(pattern + 1, string) || (*string && is_a_match(pattern, string + 1)));
-	if (*pattern == *string)
-		return (is_a_match(pattern + 1, string + 1));
-	return (0);
-}
-
 ///////////////////////////////////////////////////////////////////////////////]
 // 		......../....*
 // 		........*..../
 int	main(int ac, char **av, char **env)
 {
-	// t_folder *folder = new_folder(NULL, str("."));
-	// print_folder(folder);
-	// clean_folder(folder);
-	char *pattern = "*ab*cd*f*";
-	char *string = "agagagaalkj***ab....cd....f...";
-	put("Is Match = %d", f_is_a_match(pattern, string));
+	t_folder	*folder;
+
+	folder = new_folder(NULL, str("/"));
+	if (!folder)
+		return (1);
+	print_folder(folder);
+	clean_folder(folder);
+
+
+	// DIR 		*dir = opendir("/");
+	// put("%p\n", dir);
 	return (0);
 }
 
 ///////////////////////////////////////////////////////////////////////////////]
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-    int pid;
 
-    struct sigaction	sig_int;
-    sig_int.sa_sigaction = handle_666;
-	sigaction(SIGINT, &sig_int, NULL);
-    pid = fork();
-    if(!pid)
-    {
-        int i = 0;
-        while (1)
-        {
-            put("%d\n", i);
-            if (sleep(10) == 0)
-                exit(0);
-            i++;
-        }
-    }
-    pause();
-    waitpid(pid, NULL, 0);
-    kill(SIGINT, pid);
-    put("done\n");
+
 
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * **/

@@ -18,9 +18,11 @@ int			ft_big_brother(t_data *data, t_pipeline *pipeline);
 static void	h_bigbro(t_data *data, t_cmd *ptr_cmd);
 int			ft_lil_brother(t_data *data, t_cmd *cmd);
 
-#define INPUT_TEXT "\001 \e[38;5;%dmm\e[38;5;%dmi\e[38;5;%dma\e[38;5;%dmo\e[38;5;%dmu\e[0m (\e[0;3%dm%d\e[0m): \002"
+#define INPUT_TEXT "\001 \e[38;5;%dmm\e[38;5;%dmi\e[38;5;%dma"
+#define INPUT_TEXT2 "\e[38;5;%dmo\e[38;5;%dmu\e[0m (\e[0;3%dm%d\e[0m): \002"
 #define INPUT_TEXT_CLEAN "\001 mianishell(%d): \002"
 
+// #define INPUT_TEXT "\001input:\002"
 ///////////////////////////////////////////////////////////////////////////////]
 // input_txt = str(INPUT_TEXT_CLEAN, WEXITSTATUS(data->exit_code));
 // 1 loop per input
@@ -30,7 +32,8 @@ int	ft_minishell(t_data *data)
 	char	*input_txt;
 
 	ini_signal(data);
-	input_txt = str(INPUT_TEXT RESET, rand() % 256, rand() % 256, rand() % 256,
+	input_txt = str(INPUT_TEXT INPUT_TEXT2 RESET,
+			rand() % 256, rand() % 256, rand() % 256,
 			rand() % 256, rand() % 256,
 			1 + !(WEXITSTATUS(data->exit_code)), WEXITSTATUS(data->exit_code));
 	input = readline(input_txt);
@@ -40,6 +43,7 @@ int	ft_minishell(t_data *data)
 	input = trim(input, " \n\t");
 	if (!input)
 		return (0);
+	clear_cmd(data);
 	if (ft_parsing_v2(data, input))
 	{
 		data->exit_code = 0x0200;
@@ -69,11 +73,6 @@ int	ft_father(t_data *data)
 	{
 		sublim_pipe_v2(data, pipeline);
 		rtrn = WEXITSTATUS(data->exit_code);
-		// if (WIFSIGNALED(data->exit_code))
-		// {
-		// 	int		tmp_bit = 0;
-		// 	tmp_bit = WTERMSIG(data->exit_code);
-		// }
 		if (!pipeline->and_or || (pipeline->and_or == '&' && !rtrn)
 			|| (pipeline->and_or == '|' && rtrn))
 			rtrn = ft_big_brother(data, pipeline);
@@ -106,7 +105,7 @@ int	ft_big_brother(t_data *data, t_pipeline *pipeline)
 static void	h_bigbro(t_data *data, t_cmd *ptr_cmd)
 {
 	t_cmd	*first_cmd;
-	// int		tmp_bit = 0;
+
 	first_cmd = ptr_cmd;
 	ini_signal_exec(data);
 	while (ptr_cmd)
@@ -119,19 +118,8 @@ static void	h_bigbro(t_data *data, t_cmd *ptr_cmd)
 	while (ptr_cmd)
 	{
 		waitpid(ptr_cmd->pid, &data->exit_code, 0);
-		// put("exit_code = %d\n", data->exit_code);
-		// if (WIFSIGNALED(data->exit_code))
-		// {
-		// 	put("(PID=%d)WIFSIGNALED(data->exit_code) = %d\n", ptr_cmd->pid, WIFSIGNALED(data->exit_code));
-		// 	put("(PID=%d)WTERMSIG(data->exit_code) = %d\n", ptr_cmd->pid, WTERMSIG(data->exit_code));
-		// 	put("tmp_bit = %d\n", tmp_bit);
-		// 	tmp_bit = WTERMSIG(data->exit_code);
-		// }
 		ptr_cmd = ptr_cmd->next;
 	}
-	// put("tmp_bit final = %d\n", tmp_bit);
-	// if (tmp_bit)
-	// 	end(data, tmp_bit + 128);
 	end(data, WEXITSTATUS(data->exit_code));
 }
 

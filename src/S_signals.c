@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   S_signals.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kalipso <kalipso@student.42.fr>            +#+  +:+       +#+        */
+/*   By: umosse <umosse@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 01:29:49 by kalipso           #+#    #+#             */
-/*   Updated: 2024/09/04 04:53:56 by kalipso          ###   ########.fr       */
+/*   Updated: 2024/09/07 17:08:14 by umosse           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,4 +54,3 @@ void	h_sigint(int sig)
 void	fakesig(void)
 {
 }
-

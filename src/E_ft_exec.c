@@ -42,7 +42,6 @@ void	ft_exec_v2(t_data *data, t_cmd *cmd, char **env)
 	if (execve(cmd_exe, cmd->cmd_arg, env) == -1)
 	{
 		print_fd(2, ERR6"error execve (%s)\n", strerror(errno));
-		// perror(ERR7"error execve");
 		free_s(cmd_exe);
 		end(data, 1);
 	}
@@ -58,23 +57,13 @@ static void	h_734_redirection(t_data *data, t_cmd *cmd)
 	{
 		cmd->fd_in = open(cmd->in_file, O_RDONLY);
 		if (cmd->fd_in < 0)
-			return (perror(cmd->in_file), end(data, 5));
+			return (perror(cmd->in_file), end(data, 1));
 		dup_close(cmd->fd_in, STDIN_FILENO);
 	}
 	else if (cmd->in_file && cmd->in_bit == 2)
 		ft_heredoc(data, cmd);
 	if (cmd->out_file && cmd->out_bit)
-	{
-		if (cmd->out_bit == 1)
-			cmd->fd_out = open(cmd->out_file,
-					(O_WRONLY | O_CREAT | O_TRUNC), 0777);
-		else if (cmd->out_bit == 2)
-			cmd->fd_out = open(cmd->out_file,
-					(O_WRONLY | O_CREAT | O_APPEND), 0777);
-		if (cmd->fd_out < 0)
-			return (perror(cmd->out_file), end(data, 5));
-		dup_close(cmd->fd_out, STDOUT_FILENO);
-	}
+		h_redirec_out(data, cmd);
 	if (data->fd_in_original >= 0)
 		close(data->fd_in_original);
 	data->fd_in_original = -1;
@@ -86,7 +75,6 @@ static void	ft_heredoc(t_data *data, t_cmd *cmd)
 {
 	int		fd[2];
 	pid_t	pid;
-	char	*tmp;
 
 	if (pipe(fd) == -1)
 		return (perror(ERR7"pipe"), end(data, 4));
@@ -94,20 +82,7 @@ static void	ft_heredoc(t_data *data, t_cmd *cmd)
 	if (pid == -1)
 		return (perror(ERR7"fork"), close(fd[0]), close(fd[1]), end(data, 4));
 	if (!pid)
-	{
-		close(fd[0]);
-		dup_close(data->fd_in_original, STDIN);
-		data->fd_in_original = -1;
-		while (1)
-		{
-			tmp = readline(C_415"heredoc:"RESET);
-			if (!tmp || same_str(tmp, cmd->in_file))
-				(close(fd[1]), free_s(tmp), end(data, 0));
-			// tmp = sublim_dollar_v2(data, tmp, 1);
-			print_fd(fd[1], "%s\n", tmp);
-			tmp = free_s(tmp);
-		}
-	}
+		ft_heredoc2(data, cmd, fd);
 	else
 	{
 		close(data->fd_in_original);
@@ -123,7 +98,6 @@ static void	ft_heredoc(t_data *data, t_cmd *cmd)
  mianishell(0): <<$ABC | cat
 heredoc:this is how you say hi $ABC
 */
-
 // return full path of command > /path/to/command
 // 		./command/path > ./command/path
 static char	*find_cmd(char *command, char **env)
@@ -153,7 +127,7 @@ static char	*find_parsing(char *command, char **env)
 
 	paths = split(rtrn_var_v2(env, "PATH="), ":");
 	if (!paths)
-		return (put(RED"ERROR--->$PATH:\n%t\n"RESET, env), NULL);
+		return (put(RED"ERROR PATH NOT FOUND\n"RESET), NULL);
 	cmd = NULL;
 	i = -1;
 	while (paths[++i])

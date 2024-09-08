@@ -6,7 +6,7 @@
 /*   By: kalipso <kalipso@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/06 16:06:22 by agallon           #+#    #+#             */
-/*   Updated: 2024/09/07 11:42:12 by kalipso          ###   ########.fr       */
+/*   Updated: 2024/08/26 16:09:01 by kalipso          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,6 @@ static int	f_1(const char *str, int *i, va_list args, int fd)
 		[ %#S ] > hexadecimal
 		[ %-#S ] > no 2 precision for hexa
 		[ %+S ] > colors +128
-	%P	PERROR
 ******************************************************************************/
 int	put(const char *str, ...)
 {
@@ -147,8 +146,8 @@ int	ft_print_cat(int num, char *string2, int bit)
 	color2 = (int)(rand() % (255 + 1));
 	color3 = (int)(rand() % (255 + 1));
 	if ((bit >> 1) & 1)
-		print_fd(2, CLS);
-	print_fd(2, "\033[38;5;%dm\
+		put(CLS);
+	put("\033[38;5;%dm\
 	\tにゃ~\033[38;5;%dm\t⠀╱|、\n\
 	\t\t(˚ˎ。7⠀⠀⠀\033[38;5;%dm~ %d ~\033[38;5;%dm\n\
 	\t\t⠀|、˜\\\t\t\t\033[38;5;%dm~%s~\033[38;5;%dm\n\
@@ -156,7 +155,7 @@ int	ft_print_cat(int num, char *string2, int bit)
 	color2, color1, color2, num, color1, color2, string2, color1);
 	if ((bit >> 0) & 1)
 	{
-		print_fd(2, BLINK "\033[38;5;%dm\n\t\t>>>  PRISS ENTER TO CONTINUE  <<<\n" \
+		put(BLINK "\033[38;5;%dm\n\t\t>>>  PRISS ENTER TO CONTINUE  <<<\n" \
 			RESET, color3);
 		free_333(gnl(0));
 	}

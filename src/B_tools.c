@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   B_tools.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kalipso <kalipso@student.42.fr>            +#+  +:+       +#+        */
+/*   By: umosse <umosse@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/11 08:28:22 by kalipso           #+#    #+#             */
-/*   Updated: 2024/09/07 11:38:12 by kalipso          ###   ########.fr       */
+/*   Updated: 2024/09/07 17:07:23 by umosse           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,9 +60,10 @@ char	**pop_entry(char **env, char *to_pop)
 // free old tab; return ptr to new tab
 char	**pop_tab(char **env, char *to_pop)
 {
-	char	(**new_tab) = NULL;
-	char	(**tab_ptr) = env - 1;
+	char	**new_tab;
+	char	**tab_ptr;
 
+	new_tab = NULL;
 	if (!env || !to_pop)
 		return (env);
 	tab_ptr = env - 1;

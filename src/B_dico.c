@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   B_dico.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: umosse <umosse@student.42.fr>              +#+  +:+       +#+        */
+/*   By: agallon <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 13:01:46 by kalipso           #+#    #+#             */
-/*   Updated: 2024/08/31 16:30:26 by umosse           ###   ########.fr       */
+/*   Updated: 2024/09/07 20:28:36 by agallon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,6 @@ static const t_built_pair	g_builtin[] = {
 {"cd", cmd_cd},
 {"export", cmd_export},
 {"unset", cmd_unset},
-{"alias", cmd_alias},
 {"exit", cmd_exit},
 {"echo", cmd_echo},
 {"type", cmd_type},
@@ -41,12 +40,15 @@ int	brother_builtin_v2(t_data *data, t_cmd *cmd)
 	if (!cmd)
 		return (0);
 	i = -1;
-	while (g_builtin[++i].cmd_exe && i <= 4)
+	if (cmd->cmd_arg)
 	{
-		if (same_str(cmd->cmd_arg[0], g_builtin[i].cmd_name))
+		while (g_builtin[++i].cmd_exe && i <= 3)
 		{
-			data->exit_code = g_builtin[i].cmd_exe(data, cmd) << 2;
-			return (1);
+			if (same_str(cmd->cmd_arg[0], g_builtin[i].cmd_name))
+			{
+				data->exit_code = g_builtin[i].cmd_exe(data, cmd) << 8;
+				return (1);
+			}
 		}
 	}
 	return (0);
@@ -69,7 +71,7 @@ int	child_builtin_v2(t_data *data, t_cmd *cmd)
 	{
 		if (same_str(cmd->cmd_arg[0], g_builtin[i].cmd_name))
 		{
-			data->exit_code = g_builtin[i].cmd_exe(data, cmd);
+			data->exit_code = g_builtin[i].cmd_exe(data, cmd) << 8;
 			return (1);
 		}
 	}
