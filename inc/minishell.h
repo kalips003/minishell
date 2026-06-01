@@ -20,6 +20,7 @@
 # include <termios.h>
 // # include <termcap.h>
 # include <sys/ioctl.h>
+#include <stdio.h>
 # include <readline/readline.h>
 # include <readline/history.h>
 # include <signal.h>
